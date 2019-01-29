@@ -1,0 +1,8 @@
+export const SWITCH_SCREEN = 'switch the screens'
+export const SUBMIT_FILTER = 'submit the filter data'
+export const CHANGE_COLOR_PICKER = 'change the color picker for the maps'
+export const SET_DIVISION = 'set the division for color'
+export const SET_SCALE = 'set the scale'
+export const SET_CALCULATION = 'set the calculation for the maps'
+export const SET_COLOR_EQUATION = 'set the equations for the colors'
+export const SWITCH_FILTERS = 'switch between filters'
