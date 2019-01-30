@@ -38,8 +38,25 @@ class RenderMaps extends Component {
         }
     }
 
+    componentDidMount(){
+        let { filter_options, calculations } = this.props
+        let { name } = this.props
+        let getFilter = filter_options[name] || []
+
+        if (getFilter.length !== 0 || calculations[name]) {
+            Papa.parse(datacsv, {
+                header: true,
+                download: true,
+                skipEmptyLines: true,
+                complete: (result) => {
+                    this.updateData(result)
+                }
+            });
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
-        let { filter_options, calculations, filter_switch } = nextProps
+        let { filter_options, calculations, filter_switch, color_equation_switch } = nextProps
         let { name } = this.props
         let getFilter = filter_options[name] || []
 
@@ -65,18 +82,35 @@ class RenderMaps extends Component {
             });
         }
 
+        if (!this.props.color_equation_switch.hasOwnProperty(name) || color_equation_switch[name].switch !== this.props.color_equation_switch[name].switch) {
+            Papa.parse(datacsv, {
+                header: true,
+                download: true,
+                skipEmptyLines: true,
+                complete: (result) => {
+                    this.updateData(result)
+                }
+            });
+        }
+
         return true
     }
 
     updateData(result) {
         let { count, headers } = this.state
-        let { filter_options, division, name, calculations, color_picker, scale, colors, filter_switch } = this.props
+        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch } = this.props
         let filters = filter_options[name] || []
+        let color_equation = division[name] || []
+        let color_array = colors[name] || []
 
         if(filter_switch[name] && filter_switch[name].switch){
             filters = filter_options[filter_switch[name].target]
         }
 
+        if(color_equation_switch[name] && color_equation_switch[name].switch){
+            color_equation = division[color_equation_switch[name].target] || []
+            color_array = colors[color_equation_switch[name].target] || []
+        }
 
         let filtered_data = {}
 
@@ -139,7 +173,7 @@ class RenderMaps extends Component {
             })
         }
 
-        CreateMap(name, filtered_data, division[name] || [], color_picker, scale[name], calculations[name], colors[name] || '')
+        CreateMap(name, filtered_data, color_equation, color_picker, scale[name], calculations[name], color_array)
     }
 
     render() {
@@ -176,7 +210,8 @@ const mapStateToProps = props => {
         scale: filters.scale,
         calculations: filters.calculations,
         colors: filters.colors,
-        filter_switch: filters.filter_switch
+        filter_switch: filters.filter_switch,
+        color_equation_switch: filters.color_equation_switch
     }
 }
 

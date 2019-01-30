@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import { SketchPicker } from 'react-color';
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { changeColorPicker } from '../redux/actions/filter-action'
 
 class ColorPicker extends Component {
     constructor() {
@@ -18,12 +15,12 @@ class ColorPicker extends Component {
 
     render() {
         let { show_picker } = this.state
-        let { color_picker, label } = this.props
+        let { color_picker, label, hideText } = this.props
 
         return <div className="color-picker-layout">
             <span>{label}</span>
             <button onClick={() => this.setState({ show_picker: !this.state.show_picker })}>
-                <div className="color-review" style={{backgroundColor: color_picker}}></div> {!show_picker ? 'Select a color' : 'Confirm the color'}
+                <div className="color-review" style={{backgroundColor: color_picker}}></div> {!hideText ? `${!show_picker ? 'Select a color' : 'Confirm the color'}` : ''}
             </button>
             {show_picker ? <SketchPicker
                 className="custom-color-picker"
@@ -34,16 +31,4 @@ class ColorPicker extends Component {
     }
 }
 
-const mapStateToProps = props => {
-    let { filters } = props
-
-    return {
-        color_picker: filters.color_picker
-    }
-}
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-    changeColorPicker
-}, dispatch)
-
-export default connect(mapStateToProps, mapDispatchToProps)(ColorPicker)
+export default ColorPicker

@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import uuid from 'uuid/v4'
-import { Tooltip } from 'antd';
+import { Tooltip, Switch } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorPicker from '../../../components/color-picker'
-import { setDivision, setColorEquation } from '../../../redux/actions/filter-action'
+import { setDivision, setColorEquation, switchColorEquation } from '../../../redux/actions/filter-action'
 import Equations from '../../../components/equations';
 
 class DivisionColor extends Component {
@@ -39,6 +39,34 @@ class DivisionColor extends Component {
         this.onEquationSubmit = this.onEquationSubmit.bind(this)
         this.divisionChange = this.divisionChange.bind(this)
         this.divisionSubmit = this.divisionSubmit.bind(this)
+        this.addColor = this.addColor.bind(this)
+        this.removeColor = this.removeColor.bind(this)
+        this.switchFilter = this.switchFilter.bind(this)
+    }
+
+    switchFilter(value) {
+        let { name } = this.props
+        this.props.switchColorEquation(name, value, name === 'compareone' ? 'comparetwo' : 'compareone')
+    }
+
+    addColor() {
+        let { division_data } = this.state
+        division_data.push({
+            form: '',
+            to: '',
+            color: ''
+        })
+        this.setState({
+            division_data
+        })
+    }
+
+    removeColor(index) {
+        let { division_data } = this.state
+        division_data.splice(index, 1)
+        this.setState({
+            division_data
+        })
     }
 
     divisionSubmit() {
@@ -47,6 +75,7 @@ class DivisionColor extends Component {
 
     divisionChange(key, index, value) {
         let { division_data } = this.state
+
         if (!division_data[index]) {
             division_data[index] = {
                 from: '',
@@ -122,7 +151,7 @@ class DivisionColor extends Component {
     }
 
     render() {
-        let { headers, division, name, colors } = this.props
+        let { headers, division, name, colors, is_dual } = this.props
 
         const columns = [{
             title: 'From',
@@ -141,33 +170,50 @@ class DivisionColor extends Component {
         return (<div className="options-layout">
             <h3>
                 Equation Color
-                <Tooltip placement="rightTop" title={"Specify the equation which determines the color of the circle"}>
+                <Tooltip placement="rightTop" title={"Specify the equation which determines the color  of the circle"}>
                     <FontAwesomeIcon className="info-icon" icon="info-circle" />
                 </Tooltip>
+                {is_dual ?
+                    <span style={{ float: 'right', fontSize: '12px' }}>
+                        Swap Map filter
+                    <Switch size="small" onChange={this.switchFilter} />
+                    </span>
+                    : ''}
             </h3>
 
             <Equations options={headers} onSubmit={this.onEquationSubmit} />
-            
+
             {colors[name] ?
                 <div className="color-panel">
-                    <input />
-                    <div className="color-row">
-                        {columns.map(list => <div>{list.title}</div>)}
+                    <div className="color-row header">
+                        {columns.map(list => <div className="column-color-row">{list.title}</div>)}
                     </div>
                     {division[name] ? division[name].map((list, index) => {
                         return <div className="color-row">
-                            <div>
+                            <div className="column-color-row">
                                 <input value={list.from} onChange={e => this.divisionChange('from', index, e.target.value)} />
                             </div>
-                            <div>
+                            <div className="column-color-row">
                                 <input value={list.to} onChange={e => this.divisionChange('to', index, e.target.value)} />
                             </div>
-                            <div>
-                                <ColorPicker color={list.color} onColorChange={(color) => this.divisionChange('color', index, color)} />
+                            <div className="column-color-row">
+                                <ColorPicker hideText={true} color_picker={list.color} changeColorPicker={(color) => this.divisionChange('color', index, color)} />
                             </div>
+                            <div className="column-color-row">
+                                <FontAwesomeIcon icon="times-circle" onClick={() => this.removeColor(index)} />
+                            </div>
+
                         </div>
                     }) : ''}
-                    <button onClick={this.divisionSubmit}>Submit</button>
+                    <FontAwesomeIcon icon="plus" onClick={this.addColor} />
+
+                    <div className="filter-button-layout">
+                        <div className="filter-button right" onClick={this.divisionSubmit}>
+                            <FontAwesomeIcon className="icon-filter" icon="palette" />
+                            Submit
+                </div>
+                    </div>
+
                 </div>
                 : ''}
 
@@ -180,13 +226,15 @@ const mapStateToProps = props => {
 
     return {
         division: filters.division,
-        colors: filters.colors
+        colors: filters.colors,
+        is_dual: filters.is_dual
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setDivision,
-    setColorEquation
+    setColorEquation,
+    switchColorEquation
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DivisionColor)

@@ -2,13 +2,16 @@ import * as filterTypes from '../types/filter-types'
 
 let initialState = {
     is_dual: false,
-    calculations: {},
+    calculations: {
+        compareone: "@Arrived at within 15 "
+    },
     colors: {},
     filter_options: {},
     color_picker: '#2ecc71',
     division: {},
     scale: {},
-    filter_switch: {}
+    filter_switch: {},
+    color_equation_switch: {}
 }
 
 const FilterReducer = (state = initialState, action) => {
@@ -16,6 +19,17 @@ const FilterReducer = (state = initialState, action) => {
         case filterTypes.SWITCH_SCREEN:
             return Object.assign({}, state, {
                 is_dual: action.payload
+            })
+
+        case filterTypes.SWITCH_COLOR_EQUATION:
+            return Object.assign({}, state, {
+                color_equation_switch: {
+                    ...state.color_equation_switch,
+                    [action.key]: {
+                        switch: action.payload,
+                        target: action.target
+                    }
+                }
             })
 
         case filterTypes.SWITCH_FILTERS:

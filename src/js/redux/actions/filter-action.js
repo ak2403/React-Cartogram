@@ -46,3 +46,10 @@ export const switchFilters = (key, value, target) => ({
     key: key,
     target: target
 })
+
+export const switchColorEquation = (key, value, target) => ({
+    type: filterTypes.SWITCH_COLOR_EQUATION,
+    payload: value,
+    key: key,
+    target: target
+})
