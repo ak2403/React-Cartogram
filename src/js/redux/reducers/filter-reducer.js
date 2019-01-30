@@ -11,7 +11,8 @@ let initialState = {
     division: {},
     scale: {},
     filter_switch: {},
-    color_equation_switch: {}
+    color_equation_switch: {},
+    size_switch: {}
 }
 
 const FilterReducer = (state = initialState, action) => {
@@ -25,6 +26,17 @@ const FilterReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 color_equation_switch: {
                     ...state.color_equation_switch,
+                    [action.key]: {
+                        switch: action.payload,
+                        target: action.target
+                    }
+                }
+            })
+
+        case filterTypes.SWITCH_SIZE_EQUATION:
+            return Object.assign({}, state, {
+                size_switch: {
+                    ...state.size_switch,
                     [action.key]: {
                         switch: action.payload,
                         target: action.target

@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { Mention, Tooltip } from 'antd';
+import { Mention, Tooltip, Switch } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { setCalculation } from '../../../redux/actions/filter-action'
+import { setCalculation, switchSizeEquation } from '../../../redux/actions/filter-action'
 import { compulsory_element } from '../../../default'
 
 const { toString, toContentState } = Mention;
@@ -17,6 +17,12 @@ class Calculation extends Component {
         }
         this.onChange = this.onChange.bind(this)
         this.submit = this.submit.bind(this)
+        this.switchSize=this.switchSize.bind(this)
+    }
+
+    switchSize(value){
+        let { name } = this.props
+        this.props.switchSizeEquation(name, value, name === 'compareone' ? 'comparetwo' : 'compareone')
     }
 
     onChange(value) {
@@ -30,7 +36,7 @@ class Calculation extends Component {
     }
 
     render() {
-        let { headers, calculations, name } = this.props
+        let { headers, calculations, name, is_dual } = this.props
 
         let filtered_headers = _.filter(headers, list => {
             if(compulsory_element.indexOf(list) === -1){
@@ -44,7 +50,13 @@ class Calculation extends Component {
             <h3>Equations Size 
                 <Tooltip placement="rightTop" title={"Specify the equation which determines the size of the circle"}>
                 <FontAwesomeIcon className="info-icon" icon="info-circle" />
-                </Tooltip></h3>
+                </Tooltip>
+                {is_dual ?
+                    <span style={{ float: 'right', fontSize: '12px' }}>
+                        Swap Map filter
+                    <Switch size="small" onChange={this.switchSize} />
+                    </span>
+                    : ''}</h3>
 
             <div className="division-options">
                 <Mention
@@ -68,12 +80,14 @@ class Calculation extends Component {
 const mapStateToProps = props => {
     let { filters } = props
     return {
-        calculations: filters.calculations
+        calculations: filters.calculations,
+        is_dual: filters.is_dual
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    setCalculation
+    setCalculation,
+    switchSizeEquation
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Calculation)

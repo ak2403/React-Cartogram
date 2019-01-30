@@ -98,10 +98,15 @@ class RenderMaps extends Component {
 
     updateData(result) {
         let { count, headers } = this.state
-        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch } = this.props
+        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch } = this.props
         let filters = filter_options[name] || []
         let color_equation = division[name] || []
         let color_array = colors[name] || []
+        let size_equation = calculations[name]
+
+        if(size_switch[name] && size_switch[name].switch){
+            size_equation = calculations[size_switch[name].target] || ''
+        }
 
         if(filter_switch[name] && filter_switch[name].switch){
             filters = filter_options[filter_switch[name].target]
@@ -173,7 +178,7 @@ class RenderMaps extends Component {
             })
         }
 
-        CreateMap(name, filtered_data, color_equation, color_picker, scale[name], calculations[name], color_array)
+        CreateMap(name, filtered_data, color_equation, color_picker, scale[name], size_equation, color_array)
     }
 
     render() {
@@ -211,7 +216,8 @@ const mapStateToProps = props => {
         calculations: filters.calculations,
         colors: filters.colors,
         filter_switch: filters.filter_switch,
-        color_equation_switch: filters.color_equation_switch
+        color_equation_switch: filters.color_equation_switch,
+        size_switch: filters.size_switch
     }
 }
 

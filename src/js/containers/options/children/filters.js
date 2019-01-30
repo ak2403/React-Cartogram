@@ -5,7 +5,7 @@ import FilterSelect from '../../../components/filter-select'
 import FilterWeek from '../../../components/filter-week'
 import FilterDate from '../../../components/filter-date'
 import FilterSlider from '../../../components/filter-slider'
-import { Select, Switch } from 'antd';
+import { Select, Switch, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'uuid/v4'
 import { submitFilter, switchFilters } from '../../../redux/actions/filter-action'
@@ -121,13 +121,16 @@ class Filters extends Component {
         }
 
         return (<div className="options-layout">
-            <h3>Filters {is_dual ?
-                <span style={{float: 'right', fontSize: '12px'}}>
-                    Swap Map filter
+            <h3>Filters
+            <Tooltip placement="rightTop" title={"Specify the options to filter the data"}>
+                    <FontAwesomeIcon className="info-icon" icon="info-circle" />
+                </Tooltip> {is_dual ?
+                    <span style={{ float: 'right', fontSize: '12px' }}>
+                        Swap Map filter
                     <Switch size="small" onChange={this.switchFilter} />
-                </span>
-                : ''}</h3>
-            
+                    </span>
+                    : ''}</h3>
+
 
             <div className="filter-list">
                 {filters.map((list, index) => {
