@@ -1,6 +1,7 @@
 import * as filterTypes from '../types/filter-types'
 
 let initialState = {
+    reload: {},
     is_dual: false,
     calculations: {
         compareone: "@Arrived at within 15 "
@@ -30,6 +31,10 @@ const FilterReducer = (state = initialState, action) => {
                         switch: action.payload,
                         target: action.target
                     }
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -41,6 +46,10 @@ const FilterReducer = (state = initialState, action) => {
                         switch: action.payload,
                         target: action.target
                     }
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -52,6 +61,10 @@ const FilterReducer = (state = initialState, action) => {
                         switch: action.payload,
                         target: action.target
                     }
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -60,6 +73,10 @@ const FilterReducer = (state = initialState, action) => {
                 colors: {
                     ...state.colors,
                     [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -68,6 +85,10 @@ const FilterReducer = (state = initialState, action) => {
                 calculations: {
                     ...state.calculations,
                     [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -76,6 +97,10 @@ const FilterReducer = (state = initialState, action) => {
                 filter_options: {
                     ...state.filter_options,
                     [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -89,6 +114,10 @@ const FilterReducer = (state = initialState, action) => {
                 division: {
                     ...state.division,
                     [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
                 }
             })
 
@@ -97,6 +126,18 @@ const FilterReducer = (state = initialState, action) => {
                 scale: {
                     ...state.scale,
                     [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
+        case filterTypes.RESET_SETTINGS:
+            return Object.assign({}, state, {
+                reload: {
+                    ...state.reload,
+                    [action.key]: false
                 }
             })
 

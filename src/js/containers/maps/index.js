@@ -9,7 +9,8 @@ import Legends from '../../components/legends'
 import CreateMap from './functions/render-maps'
 import datacsv from '../../data/sample_data.csv';
 // import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
-import { modifyScale } from '../../redux/actions/filter-action'
+// import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
+import { modifyScale, resetSettings } from '../../redux/actions/filter-action'
 import { convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
 
 const ButtonGroup = Button.Group;
@@ -38,51 +39,62 @@ class RenderMaps extends Component {
         }
     }
 
-    componentDidMount(){
-        let { filter_options, calculations } = this.props
-        let { name } = this.props
-        let getFilter = filter_options[name] || []
+    // componentDidMount(){
+    //     let { filter_options, calculations } = this.props
+    //     let { name } = this.props
+    //     let getFilter = filter_options[name] || []
 
-        if (getFilter.length !== 0 || calculations[name]) {
-            Papa.parse(datacsv, {
-                header: true,
-                download: true,
-                skipEmptyLines: true,
-                complete: (result) => {
-                    this.updateData(result)
-                }
-            });
-        }
-    }
+    //     if (getFilter.length !== 0 || calculations[name]) {
+    //         Papa.parse(datacsv, {
+    //             header: true,
+    //             download: true,
+    //             skipEmptyLines: true,
+    //             complete: (result) => {
+    //                 this.updateData(result)
+    //             }
+    //         });
+    //     }
+    // }
 
     shouldComponentUpdate(nextProps, nextState) {
-        let { filter_options, calculations, filter_switch, color_equation_switch } = nextProps
+        let { filter_options, calculations, filter_switch, color_equation_switch, reload } = nextProps
         let { name } = this.props
         let getFilter = filter_options[name] || []
 
-        if (getFilter.length !== 0 || calculations[name]) {
-            Papa.parse(datacsv, {
-                header: true,
-                download: true,
-                skipEmptyLines: true,
-                complete: (result) => {
-                    this.updateData(result)
-                }
-            });
-        }
+        // if (getFilter.length !== 0 || calculations[name]) {
+        //     Papa.parse(datacsv, {
+        //         header: true,
+        //         download: true,
+        //         skipEmptyLines: true,
+        //         complete: (result) => {
+        //             this.updateData(result)
+        //         }
+        //     });
+        // }
 
-        if (!this.props.filter_switch.hasOwnProperty(name) || filter_switch[name].switch !== this.props.filter_switch[name].switch) {
-            Papa.parse(datacsv, {
-                header: true,
-                download: true,
-                skipEmptyLines: true,
-                complete: (result) => {
-                    this.updateData(result)
-                }
-            });
-        }
+        // if (!this.props.filter_switch.hasOwnProperty(name) || filter_switch[name].switch !== this.props.filter_switch[name].switch) {
+        //     Papa.parse(datacsv, {
+        //         header: true,
+        //         download: true,
+        //         skipEmptyLines: true,
+        //         complete: (result) => {
+        //             this.updateData(result)
+        //         }
+        //     });
+        // }
 
-        if (!this.props.color_equation_switch.hasOwnProperty(name) || color_equation_switch[name].switch !== this.props.color_equation_switch[name].switch) {
+        // if (!this.props.color_equation_switch.hasOwnProperty(name) || color_equation_switch[name].switch !== this.props.color_equation_switch[name].switch) {
+        //     Papa.parse(datacsv, {
+        //         header: true,
+        //         download: true,
+        //         skipEmptyLines: true,
+        //         complete: (result) => {
+        //             this.updateData(result)
+        //         }
+        //     });
+        // }
+
+        if (reload[name]) {
             Papa.parse(datacsv, {
                 header: true,
                 download: true,
@@ -91,6 +103,7 @@ class RenderMaps extends Component {
                     this.updateData(result)
                 }
             });
+            this.props.resetSettings(name)
         }
 
         return true
@@ -103,16 +116,22 @@ class RenderMaps extends Component {
         let color_equation = division[name] || []
         let color_array = colors[name] || []
         let size_equation = calculations[name]
+        let coordinates = {
+            topLat: 0,
+            topLong: 0,
+            bottomLat: 0,
+            bottomLong: 0
+        }
 
-        if(size_switch[name] && size_switch[name].switch){
+        if (size_switch[name] && size_switch[name].switch) {
             size_equation = calculations[size_switch[name].target] || ''
         }
 
-        if(filter_switch[name] && filter_switch[name].switch){
+        if (filter_switch[name] && filter_switch[name].switch) {
             filters = filter_options[filter_switch[name].target]
         }
 
-        if(color_equation_switch[name] && color_equation_switch[name].switch){
+        if (color_equation_switch[name] && color_equation_switch[name].switch) {
             color_equation = division[color_equation_switch[name].target] || []
             color_array = colors[color_equation_switch[name].target] || []
         }
@@ -151,6 +170,11 @@ class RenderMaps extends Component {
                 })
 
                 if (is_valid_data) {
+                    coordinates['topLong'] = (coordinates['topLong'] === 0 || Number(list['Centroid Longitude']) < coordinates['topLong']) ? Number(list['Centroid Longitude']) : coordinates['topLong']
+                    coordinates['bottomLong'] = (coordinates['bottomLong'] === 0 || Number(list['Centroid Longitude']) > coordinates['bottomLong']) ? Number(list['Centroid Longitude']) : coordinates['bottomLong']
+                    coordinates['topLat'] = (coordinates['topLat'] === 0 || Number(list['Centroid Latitude']) > coordinates['topLat']) ? Number(list['Centroid Latitude']) : coordinates['topLat']
+                    coordinates['bottomLat'] = (coordinates['bottomLat'] === 0 || Number(list['Centroid Latitude']) < coordinates['bottomLat']) ? Number(list['Centroid Latitude']) : coordinates['bottomLat']
+                    // , list['Centroid Latitude'])
                     if (!filtered_data[list.Centroid]) {
                         filtered_data[list.Centroid] = list
                     } else {
@@ -178,7 +202,7 @@ class RenderMaps extends Component {
             })
         }
 
-        CreateMap(name, filtered_data, color_equation, color_picker, scale[name], size_equation, color_array)
+        CreateMap(coordinates, name, filtered_data, color_equation, color_picker, scale[name], size_equation, color_array)
     }
 
     render() {
@@ -217,12 +241,14 @@ const mapStateToProps = props => {
         colors: filters.colors,
         filter_switch: filters.filter_switch,
         color_equation_switch: filters.color_equation_switch,
-        size_switch: filters.size_switch
+        size_switch: filters.size_switch,
+        reload: filters.reload
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    modifyScale
+    modifyScale,
+    resetSettings
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(RenderMaps)

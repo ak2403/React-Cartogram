@@ -1,4 +1,4 @@
-const renderMaps = (name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
+const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
     var element = d3.select(`.${name}`).node();
     var width = element.getBoundingClientRect().width;
     var height = 640;
@@ -8,6 +8,7 @@ const renderMaps = (name, data, division, defaultcolor, scale_val, calculation, 
     let min_size = 0;
     let min_color = 0;
     let max_color = 0;
+    console.log("Loading"+name)
 
     //create a new svg element with the above dimensions
     let map = d3.select(`.${name}`)
@@ -31,8 +32,8 @@ const renderMaps = (name, data, division, defaultcolor, scale_val, calculation, 
 
 
     //create projection
-    let b0 = [144.070158, -37.305532] //[140.974896, -33.976732]
-    let b1 = [145.443449, -38.570515] //[150.181651, -39.093524]
+    let b0 = [coordinates['topLong'], coordinates['topLat']] //[140.974896, -33.976732]
+    let b1 = [coordinates['bottomLong'], coordinates['bottomLat']] //[150.181651, -39.093524]
     // let division_range = (max_size + min_size) / division.length
     // let division_obj = []
     // let start_min = 0
@@ -101,15 +102,16 @@ const renderMaps = (name, data, division, defaultcolor, scale_val, calculation, 
             min_color = color_value
         }
 
-
-        nodes.push({
-            name: d.Centroid,
-            x: point[0], y: point[1],
-            x0: point[0], y0: point[1],
-            value: size_value,
-            color: color_value,
-            default_color: defaultcolor
-        });
+        if(d.Centroid !== '0'){
+            nodes.push({
+                name: d.Centroid,
+                x: point[0], y: point[1],
+                x0: point[0], y0: point[1],
+                value: size_value,
+                color: color_value,
+                default_color: defaultcolor
+            });
+        }
     }
 
     //create svg path generator using the projection

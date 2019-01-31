@@ -60,3 +60,8 @@ export const switchSizeEquation = (key, value, target) => ({
     key: key,
     target: target
 })
+
+export const resetSettings = key => ({
+    type: filterTypes.RESET_SETTINGS,
+    key: key
+})

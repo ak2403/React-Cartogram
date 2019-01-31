@@ -101,7 +101,7 @@ class Filters extends Component {
 
     render() {
         let { filters } = this.state
-        let { centroid_data, is_dual } = this.props
+        let { centroid_data, is_dual, filter_switch, name } = this.props
 
         const render_options = {
             year: (index, value) => <FilterSlider value={value} onChange={e => this.yearChange(e, index, 'Year')} />,
@@ -120,6 +120,8 @@ class Filters extends Component {
             </React.Fragment>
         }
 
+        let switch_val = filter_switch[name] ? filter_switch[name].switch : false
+
         return (<div className="options-layout">
             <h3>Filters
             <Tooltip placement="rightTop" title={"Specify the options to filter the data"}>
@@ -127,7 +129,7 @@ class Filters extends Component {
                 </Tooltip> {is_dual ?
                     <span style={{ float: 'right', fontSize: '12px' }}>
                         Swap Map filter
-                    <Switch size="small" onChange={this.switchFilter} />
+                    <Switch size="small" checked={switch_val} onChange={this.switchFilter} />
                     </span>
                     : ''}</h3>
 

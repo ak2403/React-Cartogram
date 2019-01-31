@@ -36,7 +36,7 @@ class Calculation extends Component {
     }
 
     render() {
-        let { headers, calculations, name, is_dual } = this.props
+        let { headers, calculations, name, is_dual, size_switch } = this.props
 
         let filtered_headers = _.filter(headers, list => {
             if(compulsory_element.indexOf(list) === -1){
@@ -46,6 +46,8 @@ class Calculation extends Component {
             }
         })
 
+        let switch_val = size_switch[name] ? size_switch[name].switch : false
+
         return (<div className="options-layout">
             <h3>Equations Size 
                 <Tooltip placement="rightTop" title={"Specify the equation which determines the size of the circle"}>
@@ -54,7 +56,7 @@ class Calculation extends Component {
                 {is_dual ?
                     <span style={{ float: 'right', fontSize: '12px' }}>
                         Swap Map filter
-                    <Switch size="small" onChange={this.switchSize} />
+                    <Switch size="small" checked={switch_val} onChange={this.switchSize} />
                     </span>
                     : ''}</h3>
 
@@ -81,7 +83,8 @@ const mapStateToProps = props => {
     let { filters } = props
     return {
         calculations: filters.calculations,
-        is_dual: filters.is_dual
+        is_dual: filters.is_dual,
+        size_switch: filters.size_switch
     }
 }
 

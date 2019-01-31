@@ -151,7 +151,7 @@ class DivisionColor extends Component {
     }
 
     render() {
-        let { headers, division, name, colors, is_dual } = this.props
+        let { headers, division, name, colors, is_dual, color_equation_switch } = this.props
 
         const columns = [{
             title: 'From',
@@ -167,6 +167,8 @@ class DivisionColor extends Component {
             key: 'color',
         }];
 
+        let switch_val = color_equation_switch[name] ? color_equation_switch[name].switch : false
+
         return (<div className="options-layout">
             <h3>
                 Equation Color
@@ -176,7 +178,7 @@ class DivisionColor extends Component {
                 {is_dual ?
                     <span style={{ float: 'right', fontSize: '12px' }}>
                         Swap Map filter
-                    <Switch size="small" onChange={this.switchFilter} />
+                    <Switch size="small" checked={switch_val} onChange={this.switchFilter} />
                     </span>
                     : ''}
             </h3>
@@ -227,6 +229,7 @@ const mapStateToProps = props => {
     return {
         division: filters.division,
         colors: filters.colors,
+        color_equation_switch: filters.color_equation_switch,
         is_dual: filters.is_dual
     }
 }
