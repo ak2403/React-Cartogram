@@ -57,42 +57,8 @@ class RenderMaps extends Component {
     // }
 
     shouldComponentUpdate(nextProps, nextState) {
-        let { filter_options, calculations, filter_switch, color_equation_switch, reload } = nextProps
+        let { reload } = nextProps
         let { name } = this.props
-        let getFilter = filter_options[name] || []
-
-        // if (getFilter.length !== 0 || calculations[name]) {
-        //     Papa.parse(datacsv, {
-        //         header: true,
-        //         download: true,
-        //         skipEmptyLines: true,
-        //         complete: (result) => {
-        //             this.updateData(result)
-        //         }
-        //     });
-        // }
-
-        // if (!this.props.filter_switch.hasOwnProperty(name) || filter_switch[name].switch !== this.props.filter_switch[name].switch) {
-        //     Papa.parse(datacsv, {
-        //         header: true,
-        //         download: true,
-        //         skipEmptyLines: true,
-        //         complete: (result) => {
-        //             this.updateData(result)
-        //         }
-        //     });
-        // }
-
-        // if (!this.props.color_equation_switch.hasOwnProperty(name) || color_equation_switch[name].switch !== this.props.color_equation_switch[name].switch) {
-        //     Papa.parse(datacsv, {
-        //         header: true,
-        //         download: true,
-        //         skipEmptyLines: true,
-        //         complete: (result) => {
-        //             this.updateData(result)
-        //         }
-        //     });
-        // }
 
         if (reload[name]) {
             Papa.parse(datacsv, {

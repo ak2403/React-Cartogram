@@ -8,7 +8,6 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     let min_size = 0;
     let min_color = 0;
     let max_color = 0;
-    console.log("Loading"+name)
 
     //create a new svg element with the above dimensions
     let map = d3.select(`.${name}`)
@@ -30,10 +29,11 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         tooltip.append("div")
         .attr("id", "sub-description");
 
-
+    // let b0 = [140.974896, -33.976732]
+    // let b1 = [150.181651, -39.093524]
     //create projection
-    let b0 = [coordinates['topLong'], coordinates['topLat']] //[140.974896, -33.976732]
-    let b1 = [coordinates['bottomLong'], coordinates['bottomLat']] //[150.181651, -39.093524]
+    let b0 = [coordinates['topLong'], coordinates['topLat']]
+    let b1 = [coordinates['bottomLong'], coordinates['bottomLat']]
     // let division_range = (max_size + min_size) / division.length
     // let division_obj = []
     // let start_min = 0
@@ -75,6 +75,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         })
 
         let size_value = eval(new_formula)
+        // debugger
 
         if (max_size < size_value) {
             max_size = size_value
@@ -118,7 +119,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     var path = d3.geo.path()
         .projection(projection);
 
-    var radius = d3.scale.linear()
+    var radius = d3.scale.sqrt()
         .domain([min_size, max_size])
         .range([0, 30]);
 
@@ -137,6 +138,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         .data(nodes)
         .enter().append("circle")
         .attr("r", function (d) {
+            console.log(d)
             return radius(d.value)
         })
         .style("fill", function (d) {
