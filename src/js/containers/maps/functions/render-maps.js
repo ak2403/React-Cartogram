@@ -15,49 +15,23 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         .attr('width', width)
         .attr('height', height);
 
-    let tooltip = d3.select(`.${name}`)
-        .append("div")
-        .attr("class", "custom-tooltip")
-        .style("position", "absolute")
-        .style("z-index", "10")
-        .style("visibility", "hidden");
+    let tooltip = d3.select(".custom-tooltip");
 
-    tooltip.append("div")
-        .attr("id", "header");
-    tooltip.append("div")
-        .attr("id", "description");
-        tooltip.append("div")
-        .attr("id", "sub-description");
-
-    // let b0 = [140.974896, -33.976732]
-    // let b1 = [150.181651, -39.093524]
+    // let b0 =  [142.219166, -34.25075267]
+    // let b1 = [147.0673065, -38.57692015]
     //create projection
     let b0 = [coordinates['topLong'], coordinates['topLat']]
     let b1 = [coordinates['bottomLong'], coordinates['bottomLat']]
-    // let division_range = (max_size + min_size) / division.length
-    // let division_obj = []
-    // let start_min = 0
-
-    // for (let i = 0; i < division.length; i++) {
-    //     division_obj.push({
-    //         min: start_min,
-    //         max: start_min + division_range,
-    //         color: division[i].color
-    //     })
-    //     start_min += division_range
-    // }
 
     //create projection
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
         // .scale(20000)
-        .scale(scale_val || 20000)
+        .scale(scale_val || 5000)
         .translate([width / 2, height / 2])
         .precision(0.1);
 
     let nodes = []
-    let calc_array = []
-    let count = 0
 
     for (var i in data) {
         let d = data[i]
@@ -138,8 +112,8 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         .data(nodes)
         .enter().append("circle")
         .attr("r", function (d) {
-            console.log(d)
-            return radius(d.value)
+            console.log(radius(d.value), d)
+            return 2
         })
         .style("fill", function (d) {
             let colors = d.default_color
@@ -160,7 +134,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
             return tooltip.style("visibility", "visible");
         })
         .on("mousemove", function () {
-            return tooltip.style("top", (d3.event.pageY - 30) + "px").style("left", (d3.event.pageX - 130) + "px");
+            return tooltip.style("top", (d3.event.pageY + 20) + "px").style("left", (d3.event.pageX - 130) + "px");
         })
         .on("mouseout", function () {
             return tooltip.style("visibility", "hidden");
@@ -210,6 +184,11 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
                 return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
             });
         };
+    }
+
+    return {
+        min_color,
+        max_color
     }
 
 }

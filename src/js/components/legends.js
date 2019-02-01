@@ -1,4 +1,5 @@
 import React from 'react'
+import uuid from 'uuid/v4'
 
 const Legends = props => {
     let { data, max_radius, min_radius } = props
@@ -18,8 +19,8 @@ const Legends = props => {
 
     return <div className="maps-legends">
         {division_obj.map(list => {
-            return (<div className="legends">
-                <div className="legends-color" style={{ backgroundColor: list.color }}></div> <span>{`${list.min}`} - {`${list.max}`}</span>
+            return (<div key={uuid()} className="legends">
+                <div className="legends-color" style={{ backgroundColor: list.color }}></div> <span>{`${Math.round(list.min)}`} - {`${Math.round(list.max)}`}</span>
             </div>)
         })}
     </div>

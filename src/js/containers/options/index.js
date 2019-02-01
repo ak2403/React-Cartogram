@@ -7,7 +7,8 @@ import General from './children/general'
 import Calculation from './children/Calculation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DivisionColor from './children/color-division'
-import datacsv from '../../data/sample_data.csv';
+import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
+// import datacsv from '../../data/sample_data.csv';
 // import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
 
 class Options extends Component {

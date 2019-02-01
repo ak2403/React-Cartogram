@@ -43,6 +43,11 @@ class Main extends Component {
                         <Maps name="comparetwo" />
                         <Options name="comparetwo" />
                     </div> : ''}
+                    <div className="custom-tooltip">
+                        <div id="header"></div>
+                        <div id="description"></div>
+                        <div id="sub-description"></div>
+                    </div>
                 </div>
             </div>
         );
