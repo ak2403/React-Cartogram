@@ -62,3 +62,5 @@ export const month_options = [{
 export const compulsory_element = ['Year','Month','Day_of_Week','Hour_of_Day','Centroid','Centroid Longitude','Centroid Latitude']
 
 export const non_compulsory_element = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases']
+
+export const statistics_array = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases']

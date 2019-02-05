@@ -1,7 +1,9 @@
+import $ from 'jquery'
+
 const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
     var element = d3.select(`.${name}`).node();
     var width = element.getBoundingClientRect().width;
-    var height = 640;
+    var height = 600;
     var padding = 3;
 
     let max_size = 0;
@@ -27,7 +29,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
         // .scale(20000)
-        .scale(scale_val || 5000)
+        .scale(scale_val || 20000)
         .translate([width / 2, height / 2])
         .precision(0.1);
 
@@ -111,9 +113,12 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     var node = map.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
+        .attr('class', function(d, i){
+            return `${name}-${i}`
+        })
         .attr("r", function (d) {
-            console.log(radius(d.value), d)
-            return 2
+            // console.log(radius(d.value), d)
+            return radius(d.value)
         })
         .style("fill", function (d) {
             let colors = d.default_color
@@ -138,6 +143,15 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         })
         .on("mouseout", function () {
             return tooltip.style("visibility", "hidden");
+        })
+        .on('click', function(d, i){
+            for(let iter=0;iter<nodes.length;iter++){
+                if(i !== iter){
+                    $(`.${name}-${iter}`).css('opacity', 0.4)
+                }else{
+                    $(`.${name}-${iter}`).css('opacity', 1)
+                }
+            }
         });
 
 

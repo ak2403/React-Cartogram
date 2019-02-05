@@ -1,17 +1,19 @@
 import React, { Component } from "react";
-import { Button, Mention } from 'antd';
+import { Button, Drawer, Radio } from 'antd';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import _ from 'lodash'
 import $ from 'jquery'
 import Papa from 'papaparse'
 import Legends from '../../components/legends'
+import CollapseComponent from '../../components/collapse'
 import CreateMap from './functions/render-maps'
-// import datacsv from '../../data/sample_data.csv';
+import datacsv from '../../data/sample_data.csv';
 // import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
-import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
+// import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
 import { modifyScale, resetSettings } from '../../redux/actions/filter-action'
-import { convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
+import { statistics_array, convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
 
 const ButtonGroup = Button.Group;
 
@@ -22,10 +24,35 @@ class RenderMaps extends Component {
             count: 0,
             headers: [],
             max_radius: 0,
-            min_radius: 0
+            min_radius: 0,
+            visible: false,
+            placement: 'left',
+            statistics: {},
+            reload: false
         }
         this.updateData = this.updateData.bind(this)
         this.changeScale = this.changeScale.bind(this)
+        this.showDrawer = this.showDrawer.bind(this)
+        this.onClose = this.onClose.bind(this)
+        this.onChange = this.onChange.bind(this)
+    }
+
+    showDrawer() {
+        this.setState({
+            visible: true,
+        });
+    };
+
+    onClose() {
+        this.setState({
+            visible: false,
+        });
+    };
+
+    onChange(e) {
+        this.setState({
+            placement: e.target.value,
+        });
     }
 
     changeScale(type) {
@@ -60,6 +87,13 @@ class RenderMaps extends Component {
         let { reload } = nextProps
         let { name } = this.props
 
+        if (this.state.reload !== nextState.reload) {
+            this.setState({
+                reload: false
+            })
+            return true
+        }
+
         if (reload[name]) {
             Papa.parse(datacsv, {
                 header: true,
@@ -88,6 +122,7 @@ class RenderMaps extends Component {
             bottomLat: 0,
             bottomLong: 0
         }
+        let statistics_data = {}
 
         if (size_switch[name] && size_switch[name].switch) {
             size_equation = calculations[size_switch[name].target] || ''
@@ -140,7 +175,23 @@ class RenderMaps extends Component {
                     coordinates['bottomLong'] = (coordinates['bottomLong'] === 0 || Number(list['Centroid Longitude']) > coordinates['bottomLong']) ? Number(list['Centroid Longitude']) : coordinates['bottomLong']
                     coordinates['topLat'] = (coordinates['topLat'] === 0 || Number(list['Centroid Latitude']) > coordinates['topLat']) ? Number(list['Centroid Latitude']) : coordinates['topLat']
                     coordinates['bottomLat'] = (coordinates['bottomLat'] === 0 || Number(list['Centroid Latitude']) < coordinates['bottomLat']) ? Number(list['Centroid Latitude']) : coordinates['bottomLat']
-                    // , list['Centroid Latitude'])
+
+                    _.each(list, function (value, key) {
+                        if (statistics_array.indexOf(key) !== -1) {
+                            !statistics_data[key] && (statistics_data[key] = {
+                                min: list,
+                                max: list
+                            })
+                            if (statistics_data[key].min) {
+                                statistics_data[key].min = Number(statistics_data[key].min[key]) > Number(value) ? list : statistics_data[key].min
+                            }
+                            if (statistics_data[key].max) {
+                                statistics_data[key].max = Number(statistics_data[key].max[key]) < Number(value) ? list : statistics_data[key].max
+                            }
+                        }
+                    })
+
+
                     if (!filtered_data[list.Centroid]) {
                         filtered_data[list.Centroid] = list
                     } else {
@@ -156,34 +207,26 @@ class RenderMaps extends Component {
             }
         })
 
-        if (headers.length !== result.meta.fields.length) {
-            this.setState({
-                headers: result.meta.fields
-            })
-        }
-
-        if (count !== Object.keys(filtered_data).length) {
-            this.setState({
-                count: Object.keys(filtered_data).length
-            })
-        }
-
         let return_value = CreateMap(coordinates, name, filtered_data, color_equation, color_picker, scale[name], size_equation, color_array)
-        
         this.setState({
+            statistics: statistics_data,
+            headers: result.meta.fields,
+            count: Object.keys(filtered_data).length,
             min_radius: return_value.min_color,
-            max_radius: return_value.max_color
+            max_radius: return_value.max_color,
+            reload: true
         })
     }
 
     render() {
-        let { count, max_radius, min_radius, headers } = this.state
+        let { count, max_radius, min_radius, statistics } = this.state
         let { division, name } = this.props
 
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">
                     Count: {count}
+                    <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     <ButtonGroup size='small'>
                         <Button onClick={() => this.changeScale('in')}>+</Button>
                         <Button onClick={() => this.changeScale('out')}>-</Button>
@@ -195,6 +238,15 @@ class RenderMaps extends Component {
                     </div>
                 </div>
                 <Legends data={division[name] || []} max_radius={max_radius} min_radius={min_radius} />
+                <Drawer
+                    title="Statistics"
+                    placement={this.state.placement}
+                    closable={false}
+                    onClose={this.onClose}
+                    visible={this.state.visible}
+                >
+                    <CollapseComponent data={statistics} />
+                </Drawer>
             </div>
         );
     }
