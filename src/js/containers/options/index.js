@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Papa from 'papaparse'
 import Filters from './children/filters'
 import General from './children/general'
+import CentroidFilters from './children/centroid-filter'
 import Calculation from './children/Calculation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DivisionColor from './children/color-division'
@@ -60,6 +61,7 @@ class Options extends Component {
                 </div>
                 <Calculation name={name} headers={headers} />
                 <General name={name} />
+                <CentroidFilters name={name} centroid_data={centroid_data} />
                 <Filters name={name} centroid_data={centroid_data} />
                 <DivisionColor name={name} headers={headers} />
             </div> : <div className="float-icon">

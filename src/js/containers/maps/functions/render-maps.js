@@ -117,7 +117,6 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
             return `${name}-${i}`
         })
         .attr("r", function (d) {
-            // console.log(radius(d.value), d)
             return radius(d.value)
         })
         .style("fill", function (d) {

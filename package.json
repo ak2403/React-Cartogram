@@ -37,6 +37,7 @@
     "file-loader": "^3.0.1",
     "i": "^0.3.6",
     "jquery": "^3.3.1",
+    "list-react-files": "^0.2.0",
     "lodash": "^4.17.11",
     "mathjs": "^5.4.1",
     "node-sass": "^4.11.0",

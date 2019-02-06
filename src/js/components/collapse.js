@@ -4,14 +4,6 @@ import _ from 'lodash'
 
 const Panel = Collapse.Panel;
 
-const text = (
-    <p style={{ paddingLeft: 24 }}>
-        A dog is a type of domesticated animal.
-        Known for its loyalty and faithfulness,
-        it can be found as a welcome guest in many households across the world.
-  </p>
-);
-
 const CollapseComponent = props => {
     let { data } = props
     let dataKeys = Object.keys(data)
@@ -19,15 +11,22 @@ const CollapseComponent = props => {
     return <Collapse bordered={false} defaultActiveKey={dataKeys}>
         {dataKeys.map(key => {
             let key_data = data[key]
+            let list_data = [{
+                name: 'Minimum',
+                value: key_data.min[key],
+                centroid: key_data.min.Centroid
+            }, {
+                name: 'Maximum',
+                value: key_data.max[key],
+                centroid: key_data.max.Centroid
+            }]
             return <Panel header={key} key={key}>
-                <h6 style={{ marginBottom: 16 }}>Minimum</h6>
                 <List
                     size="small"
-                    header={<div>Minimum</div>}
                     bordered
-                    dataSource={Object.keys(key_data.min)}
-                    renderItem={item => (<List.Item>{item} - {key_data.min[item]}</List.Item>)}
-                    />
+                    dataSource={list_data}
+                    renderItem={item => (<List.Item>{item.name} - {item.centroid} <b>({item.value})</b></List.Item>)}
+                />
             </Panel>
         })}
     </Collapse>

@@ -16,7 +16,7 @@ class General extends Component {
 
             <div className="division-options">
                 <div className="division-input">
-                    {/* <ColorPicker label="Color" /> */}
+                    <ColorPicker label="Color" />
                 </div>
             </div>
         </div>)

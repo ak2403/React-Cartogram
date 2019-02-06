@@ -145,7 +145,8 @@ class RenderMaps extends Component {
 
         data.map(list => {
             if (list.Centroid !== '(blank)') {
-                let is_valid_data = true
+                let is_valid_data = true,
+                    is_gray_data = false;
 
                 filters.map(filter => {
                     if (filter.value.length !== 0) {
@@ -164,13 +165,17 @@ class RenderMaps extends Component {
                                 is_valid_data = false
                             }
 
+                        // } else if (filter.key === 'centroid'){
+                            // if(filter.value.indexOf(list[filter.key]) === -1) {
+                            //     is_gray_data = true
+                            // }
                         } else if (filter.value.indexOf(list[filter.key]) === -1) {
                             is_valid_data = false
                         }
                     }
                 })
 
-                if (is_valid_data) {
+                if (is_valid_data || is_gray_data) {
                     coordinates['topLong'] = (coordinates['topLong'] === 0 || Number(list['Centroid Longitude']) < coordinates['topLong']) ? Number(list['Centroid Longitude']) : coordinates['topLong']
                     coordinates['bottomLong'] = (coordinates['bottomLong'] === 0 || Number(list['Centroid Longitude']) > coordinates['bottomLong']) ? Number(list['Centroid Longitude']) : coordinates['bottomLong']
                     coordinates['topLat'] = (coordinates['topLat'] === 0 || Number(list['Centroid Latitude']) > coordinates['topLat']) ? Number(list['Centroid Latitude']) : coordinates['topLat']
@@ -180,7 +185,8 @@ class RenderMaps extends Component {
                         if (statistics_array.indexOf(key) !== -1) {
                             !statistics_data[key] && (statistics_data[key] = {
                                 min: list,
-                                max: list
+                                max: list,
+                                values: []
                             })
                             if (statistics_data[key].min) {
                                 statistics_data[key].min = Number(statistics_data[key].min[key]) > Number(value) ? list : statistics_data[key].min
@@ -188,12 +194,17 @@ class RenderMaps extends Component {
                             if (statistics_data[key].max) {
                                 statistics_data[key].max = Number(statistics_data[key].max[key]) < Number(value) ? list : statistics_data[key].max
                             }
+                            
+                            if(!isNaN(list[key])){
+                                statistics_data[key].values.push(Number(list[key]))
+                            }
                         }
                     })
 
 
                     if (!filtered_data[list.Centroid]) {
                         filtered_data[list.Centroid] = list
+                        filtered_data[list.Centroid]['grayed'] = is_gray_data
                     } else {
                         let get_centroid = filtered_data[list.Centroid]
 
@@ -225,8 +236,8 @@ class RenderMaps extends Component {
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">
+                <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     Count: {count}
-                    <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     <ButtonGroup size='small'>
                         <Button onClick={() => this.changeScale('in')}>+</Button>
                         <Button onClick={() => this.changeScale('out')}>-</Button>
