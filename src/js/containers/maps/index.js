@@ -9,6 +9,7 @@ import Papa from 'papaparse'
 import Legends from '../../components/legends'
 import CollapseComponent from '../../components/collapse'
 import CreateMap from './functions/render-maps'
+// import datacsv from '../../data/LGA_Centroid_Test.csv';
 import datacsv from '../../data/sample_data.csv';
 // import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
 // import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
@@ -110,12 +111,13 @@ class RenderMaps extends Component {
     }
 
     updateData(result) {
-        let { count, headers } = this.state
-        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch } = this.props
+        let { count } = this.state
+        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters } = this.props
         let filters = filter_options[name] || []
         let color_equation = division[name] || []
         let color_array = colors[name] || []
         let size_equation = calculations[name]
+        let filter_centroid = centroid_filters[name] || []
         let coordinates = {
             topLat: 0,
             topLong: 0,
@@ -142,11 +144,29 @@ class RenderMaps extends Component {
         $(`.${name}`).empty()
 
         const data = result.data;
+        const headers = result.meta.fields
+
+        let getKeys = {
+            latitude: '',
+            longitude: ''
+        }
+        
+        for(let i=0;i< headers.length;i++){
+            if(headers[i].toLowerCase().indexOf('long') !== -1){
+                getKeys.longitude = headers[i]
+            }
+            if(headers[i].toLowerCase().indexOf('lat') !== -1){
+                getKeys.latitude = headers[i]
+            }
+        }
 
         data.map(list => {
             if (list.Centroid !== '(blank)') {
                 let is_valid_data = true,
                     is_gray_data = false;
+                
+                let lat_cor = Number(list[getKeys.latitude]),
+                    long_cor = Number(list[getKeys.longitude]);
 
                 filters.map(filter => {
                     if (filter.value.length !== 0) {
@@ -157,29 +177,27 @@ class RenderMaps extends Component {
                             }
                         } else if (filter.key === 'date') {
                             let get_month_index = convertMonthtoVal(list.Month)
-                            // console.log(filter.value)
                             if ((Number(list.Year) >= filter.value.from.year && get_month_index >= filter.value.from.month) &&
                                 (Number(list.Year) <= filter.value.to.year && get_month_index <= filter.value.to.month)) {
                                 console.log(list)
                             } else {
                                 is_valid_data = false
                             }
-
-                        // } else if (filter.key === 'centroid'){
-                            // if(filter.value.indexOf(list[filter.key]) === -1) {
-                            //     is_gray_data = true
-                            // }
                         } else if (filter.value.indexOf(list[filter.key]) === -1) {
                             is_valid_data = false
                         }
                     }
                 })
 
-                if (is_valid_data || is_gray_data) {
-                    coordinates['topLong'] = (coordinates['topLong'] === 0 || Number(list['Centroid Longitude']) < coordinates['topLong']) ? Number(list['Centroid Longitude']) : coordinates['topLong']
-                    coordinates['bottomLong'] = (coordinates['bottomLong'] === 0 || Number(list['Centroid Longitude']) > coordinates['bottomLong']) ? Number(list['Centroid Longitude']) : coordinates['bottomLong']
-                    coordinates['topLat'] = (coordinates['topLat'] === 0 || Number(list['Centroid Latitude']) > coordinates['topLat']) ? Number(list['Centroid Latitude']) : coordinates['topLat']
-                    coordinates['bottomLat'] = (coordinates['bottomLat'] === 0 || Number(list['Centroid Latitude']) < coordinates['bottomLat']) ? Number(list['Centroid Latitude']) : coordinates['bottomLat']
+                if (filter_centroid.indexOf(list.Centroid) !== -1) {
+                    is_gray_data = true
+                }
+
+                if (is_valid_data) {
+                    coordinates['topLong'] = (coordinates['topLong'] === 0 || long_cor < coordinates['topLong']) ? long_cor : coordinates['topLong']
+                    coordinates['bottomLong'] = (coordinates['bottomLong'] === 0 || long_cor > coordinates['bottomLong']) ? long_cor : coordinates['bottomLong']
+                    coordinates['topLat'] = (coordinates['topLat'] === 0 || lat_cor > coordinates['topLat']) ? lat_cor : coordinates['topLat']
+                    coordinates['bottomLat'] = (coordinates['bottomLat'] === 0 || lat_cor < coordinates['bottomLat']) ? lat_cor : coordinates['bottomLat']
 
                     _.each(list, function (value, key) {
                         if (statistics_array.indexOf(key) !== -1) {
@@ -194,8 +212,8 @@ class RenderMaps extends Component {
                             if (statistics_data[key].max) {
                                 statistics_data[key].max = Number(statistics_data[key].max[key]) < Number(value) ? list : statistics_data[key].max
                             }
-                            
-                            if(!isNaN(list[key])){
+
+                            if (!isNaN(list[key])) {
                                 statistics_data[key].values.push(Number(list[key]))
                             }
                         }
@@ -205,6 +223,7 @@ class RenderMaps extends Component {
                     if (!filtered_data[list.Centroid]) {
                         filtered_data[list.Centroid] = list
                         filtered_data[list.Centroid]['grayed'] = is_gray_data
+                        filtered_data[list.Centroid]['is_centroid_filter'] = filter_centroid.length !== 0 ? true : false
                     } else {
                         let get_centroid = filtered_data[list.Centroid]
 
@@ -218,7 +237,7 @@ class RenderMaps extends Component {
             }
         })
 
-        let return_value = CreateMap(coordinates, name, filtered_data, color_equation, color_picker, scale[name], size_equation, color_array)
+        let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array)
         this.setState({
             statistics: statistics_data,
             headers: result.meta.fields,
@@ -236,7 +255,7 @@ class RenderMaps extends Component {
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">
-                <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
+                    <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     Count: {count}
                     <ButtonGroup size='small'>
                         <Button onClick={() => this.changeScale('in')}>+</Button>
@@ -268,6 +287,7 @@ const mapStateToProps = props => {
 
     return {
         filter_options: _.cloneDeep(filters.filter_options),
+        centroid_filters: _.cloneDeep(filters.centroid_filters),
         color_picker: filters.color_picker,
         division: filters.division,
         scale: filters.scale,

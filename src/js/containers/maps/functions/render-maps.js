@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
+const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
     var element = d3.select(`.${name}`).node();
     var width = element.getBoundingClientRect().width;
     var height = 600;
@@ -38,7 +38,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     for (var i in data) {
         let d = data[i]
 
-        var point = projection([d['Centroid Longitude'], d['Centroid Latitude']])
+        var point = projection([d[keys.longitude], d[keys.latitude]])
 
         // count < 6 ? count += 1 : count = 0
 
@@ -79,9 +79,11 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
             min_color = color_value
         }
 
-        if(d.Centroid !== '0'){
+        if (d.Centroid !== '0') {
             nodes.push({
                 name: d.Centroid,
+                apply_gray: d.is_centroid_filter,
+                grayed: d.grayed,
                 x: point[0], y: point[1],
                 x0: point[0], y0: point[1],
                 value: size_value,
@@ -113,7 +115,7 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
     var node = map.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-        .attr('class', function(d, i){
+        .attr('class', function (d, i) {
             return `${name}-${i}`
         })
         .attr("r", function (d) {
@@ -123,13 +125,22 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
             let colors = d.default_color
 
             division.map(list => {
-                let start_val = max_color * (Number(list['from'])/100)
-                let end_val = max_color * (Number(list['to'])/100)
-                if(d.color > start_val && d.color <= end_val){
+                let start_val = max_color * (Number(list['from']) / 100)
+                let end_val = max_color * (Number(list['to']) / 100)
+                if (d.color > start_val && d.color <= end_val) {
                     colors = list.color
                 }
             })
             return colors
+        })
+        .style("opacity", function (d) {
+            if (d.apply_gray) {
+                if (d.grayed)
+                    return 1;
+                else
+                    return 0.3;
+            }
+            return 1
         })
         .on("mouseover", function (d) {
             tooltip.select("#header").text(`Centroid: ${d.name}`)
@@ -143,11 +154,11 @@ const renderMaps = (coordinates, name, data, division, defaultcolor, scale_val, 
         .on("mouseout", function () {
             return tooltip.style("visibility", "hidden");
         })
-        .on('click', function(d, i){
-            for(let iter=0;iter<nodes.length;iter++){
-                if(i !== iter){
+        .on('click', function (d, i) {
+            for (let iter = 0; iter < nodes.length; iter++) {
+                if (i !== iter) {
                     $(`.${name}-${iter}`).css('opacity', 0.4)
-                }else{
+                } else {
                     $(`.${name}-${iter}`).css('opacity', 1)
                 }
             }

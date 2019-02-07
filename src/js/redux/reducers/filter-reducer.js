@@ -8,12 +8,13 @@ let initialState = {
     },
     colors: {},
     filter_options: {},
-    color_picker: '#2ecc71',
+    color_picker: {},
     division: {},
     scale: {},
     filter_switch: {},
     color_equation_switch: {},
-    size_switch: {}
+    size_switch: {},
+    centroid_filters: {}
 }
 
 const FilterReducer = (state = initialState, action) => {
@@ -21,6 +22,18 @@ const FilterReducer = (state = initialState, action) => {
         case filterTypes.SWITCH_SCREEN:
             return Object.assign({}, state, {
                 is_dual: action.payload
+            })
+
+        case filterTypes.SET_CENTROID_FILTER:
+            return Object.assign({}, state, {
+                centroid_filters: {
+                    ...state.centroid_filters,
+                    [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
             })
 
         case filterTypes.SWITCH_COLOR_EQUATION:
@@ -106,7 +119,14 @@ const FilterReducer = (state = initialState, action) => {
 
         case filterTypes.CHANGE_COLOR_PICKER:
             return Object.assign({}, state, {
-                color_picker: action.payload
+                color_picker: {
+                    ...state.color_picker,
+                    [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
             })
 
         case filterTypes.SET_DIVISION:

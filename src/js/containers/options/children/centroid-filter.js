@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Select, Switch, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'uuid/v4'
+import { setCentroidFilter } from '../../../redux/actions/filter-action'
 
 const Option = Select.Option;
 
@@ -13,14 +14,28 @@ class CentroidFilters extends Component {
         this.state = {
             filters: [],
         }
+        this.onChange = this.onChange.bind(this)
+        this.onSubmit = this.onSubmit.bind(this)
+    }
+
+    onChange(value){
+        this.setState({
+            filters: value
+        })
+    }
+
+    onSubmit(value) {
+        let { filters } = this.state
+        let { name } = this.props
+        this.props.setCentroidFilter(name, filters)
     }
 
     render() {
         let { centroid_data, name } = this.props
-        
+
         return (<div className="options-layout">
             <h3>Centroid Filters
-            <Tooltip placement="rightTop" title={"Specify the options to filter the data"}>
+            <Tooltip placement="rightTop" title={"Specify the options to filter the data based on the centroid"}>
                     <FontAwesomeIcon className="info-icon" icon="info-circle" />
                 </Tooltip></h3>
 
@@ -29,15 +44,15 @@ class CentroidFilters extends Component {
                 <span>Centroid:</span>
                 <Select
                     mode="multiple"
-                    style={{ width: '200px' }}
+                    style={{ width: '200px', float: 'right' }}
                     placeholder="Please select"
-                    // onChange={e => this.yearChange(e, index, 'Centroid')}
-                    >
+                    onChange={this.onChange}
+                >
                     {centroid_data.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
             </div>
             <div className="filter-button-layout">
-                <div className="filter-button" onClick={this.submitFilter}>
+                <div className="filter-button" onClick={this.onSubmit}>
                     <FontAwesomeIcon className="icon-filter" icon="filter" />
                     Filter
             </div>
@@ -55,6 +70,7 @@ const mapStateToProps = props => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    setCentroidFilter
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CentroidFilters)

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Radio } from 'antd';
 import Maps from './containers/maps'
 import Options from "./containers/options/index.js";
-import {switchScreen} from './redux/actions/filter-action'
+import { switchScreen } from './redux/actions/filter-action'
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -35,14 +35,24 @@ class Main extends Component {
                     </RadioGroup>
                 </div>
                 <div className="maps-layout">
-                    <div className="map-layer">
+                    {!is_dual ? <div className="map-layer">
                         <Maps name="compareone" />
                         <Options name="compareone" />
-                    </div>
-                    {is_dual ? <div className="map-layer">
-                        <Maps name="comparetwo" />
-                        <Options name="comparetwo" />
-                    </div> : ''}
+                    </div> :
+                        <React.Fragment>
+                            <div className="map-layer">
+                                <Maps name="compareone" />
+                                <Options name="compareone" />
+                            </div>
+                            <div className="map-layer">
+                                <Maps name="comparetwo" />
+                                <Options name="comparetwo" />
+                            </div>
+                        </React.Fragment>}
+
+
+
+
                     <div className="custom-tooltip">
                         <div id="header"></div>
                         <div id="description"></div>

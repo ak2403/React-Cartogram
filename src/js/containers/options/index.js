@@ -11,6 +11,7 @@ import DivisionColor from './children/color-division'
 // import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
 import datacsv from '../../data/sample_data.csv';
 // import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
+// import datacsv from '../../data/LGA_Centroid_Test.csv';
 
 class Options extends Component {
     constructor() {
@@ -61,7 +62,7 @@ class Options extends Component {
                 </div>
                 <Calculation name={name} headers={headers} />
                 <General name={name} />
-                <CentroidFilters name={name} centroid_data={centroid_data} />
+                {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} /> : ''}
                 <Filters name={name} centroid_data={centroid_data} />
                 <DivisionColor name={name} headers={headers} />
             </div> : <div className="float-icon">

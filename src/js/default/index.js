@@ -15,11 +15,13 @@ export const filter_options = [{
     text: 'Date',
     value: 'date',
     key: 'Day_of_Week'
-}, {
-    text: 'Centroid',
-    value: 'centroid',
-    key: 'Centroid'
-}]
+}
+// , {
+//     text: 'Centroid',
+//     value: 'centroid',
+//     key: 'Centroid'
+// }
+]
 
 export const month_options = [{
     text: 'January',

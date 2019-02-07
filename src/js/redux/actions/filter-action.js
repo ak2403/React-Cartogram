@@ -11,9 +11,10 @@ export const submitFilter = (data, key) => ({
     key: key
 })
 
-export const changeColorPicker = color => ({
+export const changeColorPicker = (key, value) => ({
     type: filterTypes.CHANGE_COLOR_PICKER,
-    payload: color
+    payload: value,
+    key: key
 })
 
 export const setDivision = (value, key) => ({
@@ -59,6 +60,12 @@ export const switchSizeEquation = (key, value, target) => ({
     payload: value,
     key: key,
     target: target
+})
+
+export const setCentroidFilter = (key, value) => ({
+    type: filterTypes.SET_CENTROID_FILTER,
+    payload: value,
+    key: key
 })
 
 export const resetSettings = key => ({
