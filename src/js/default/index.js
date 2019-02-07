@@ -3,6 +3,17 @@ export const convertMonthtoVal = name => {
     return month.indexOf(name)
 }
 
+export const datasets = [{
+    text: 'LGA',
+    path: '../../data/LGA_Centroid_Test.csv'
+},{
+    text: 'Sample Data',
+    path: '../../data/sample_data.csv'
+},{
+    text: 'Rural Combined',
+    path: '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv'
+}]
+
 export const filter_options = [{
     text: 'Year',
     value: 'year',

@@ -1,5 +1,10 @@
 import * as filterTypes from '../types/filter-types'
 
+export const addMaps = value => ({
+    type: filterTypes.ADD_NEW_MAPS,
+    payload: value
+})
+
 export const switchScreen = value => ({
     type: filterTypes.SWITCH_SCREEN,
     payload: value
