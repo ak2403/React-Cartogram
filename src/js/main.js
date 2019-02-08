@@ -7,6 +7,11 @@ import Options from "./containers/options/index.js";
 import AddMaps from './components/addmaps-modal';
 import { switchScreen } from './redux/actions/filter-action'
 
+import lga from './data/LGA_Centroid_Test.csv';
+import sample_data from './data/sample_data.csv';
+// import datacsv from './data/Rural_Combined_Cohorts_Oct-Dec18.csv';
+// import datacsv from './data/SCF_Master_Table_Joined_F.csv';
+
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
@@ -15,7 +20,7 @@ class Main extends Component {
         super()
         this.state = {
             scale: 0,
-            visible: true
+            visible: false
         }
         this.onChange = this.onChange.bind(this)
         this.showModal = this.showModal.bind(this)
@@ -47,20 +52,20 @@ class Main extends Component {
 
     render() {
         let { visible } = this.state
-        let { is_dual } = this.props
+        let { is_dual, maps } = this.props
 
         return (
             <div className="container adjust-width">
                 <div className="header-layout">
                     <h3>Ambulance Victoria</h3>
-                    <RadioGroup onChange={this.onChange} size='small'>
+                    {/* <RadioGroup onChange={this.onChange} size='small'>
                         <RadioButton value="single">Single</RadioButton>
                         <RadioButton value="compare">Compare</RadioButton>
-                    </RadioGroup>
-                    <Button>Modal</Button>
+                    </RadioGroup> */}
+                    <Button onClick={this.showModal}>Modal</Button>
                 </div>
                 <div className="maps-layout">
-                    {!is_dual ? <div className="map-layer">
+                    {/* {!is_dual ? <div className="map-layer">
                         <Maps name="compareone" />
                         <Options name="compareone" />
                     </div> :
@@ -73,9 +78,12 @@ class Main extends Component {
                                 <Maps name="comparetwo" />
                                 <Options name="comparetwo" />
                             </div>
-                        </React.Fragment>}
+                        </React.Fragment>} */}
 
-
+                    {maps.map(list => <div className="map-layer">
+                        <Maps name={list.title} dataset={list.dataset} />
+                        <Options name={list.title} dataset={list.dataset} />
+                    </div>)}
 
 
                     <div className="custom-tooltip">
@@ -102,7 +110,8 @@ const mapStateToProps = props => {
     let { filters } = props
 
     return {
-        is_dual: filters.is_dual
+        is_dual: filters.is_dual,
+        maps: filters.maps
     }
 }
 

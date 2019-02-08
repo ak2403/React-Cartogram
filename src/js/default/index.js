@@ -5,13 +5,13 @@ export const convertMonthtoVal = name => {
 
 export const datasets = [{
     text: 'LGA',
-    path: '../../data/LGA_Centroid_Test.csv'
+    path: 'lga'
 },{
     text: 'Sample Data',
-    path: '../../data/sample_data.csv'
+    path: 'sample_data'
 },{
     text: 'Rural Combined',
-    path: '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv'
+    path: 'rural_combined'
 }]
 
 export const filter_options = [{

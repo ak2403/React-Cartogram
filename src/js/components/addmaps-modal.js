@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Form, Input, Select, Button } from 'antd';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import { datasets } from '../default'
+import { addMaps } from '../redux/actions/filter-action'
 
 const { Option } = Select;
 
@@ -17,8 +20,8 @@ class AddMaps extends Component {
         this.onSubmit = this.onSubmit.bind(this)
     }
 
-    onSubmit(){
-        debugger
+    onSubmit() {
+        this.props.addMaps(this.state.new_map)
     }
 
     onChange(name, value) {
@@ -42,7 +45,7 @@ class AddMaps extends Component {
         };
 
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form>
                 <Form.Item
                     {...formItemLayout}
                     label="Title"
@@ -61,11 +64,15 @@ class AddMaps extends Component {
                 </Form.Item>
 
                 <Form.Item {...formItemLayout}>
-                    <Button htmlType="submit">Add</Button>
+                    <Button onClick={this.onSubmit}>Add</Button>
                 </Form.Item>
             </Form>
         );
     }
 }
 
-export default AddMaps
+const mapDispatchToProps = dispatch => bindActionCreators({
+    addMaps
+}, dispatch)
+
+export default connect(null, mapDispatchToProps)(AddMaps)

@@ -8,10 +8,7 @@ import CentroidFilters from './children/centroid-filter'
 import Calculation from './children/Calculation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DivisionColor from './children/color-division'
-// import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
-import datacsv from '../../data/sample_data.csv';
-// import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
-// import datacsv from '../../data/LGA_Centroid_Test.csv';
+import Datasets from '../../data'
 
 class Options extends Component {
     constructor() {
@@ -26,7 +23,7 @@ class Options extends Component {
     }
 
     componentDidMount() {
-        Papa.parse(datacsv, {
+        Papa.parse(Datasets[this.props.dataset], {
             header: true,
             download: true,
             skipEmptyLines: true,
@@ -37,6 +34,7 @@ class Options extends Component {
     updateData(result) {
         let { centroid_data } = this.state
         const data = result.data;
+        
         data.map(list => {
             if (centroid_data.indexOf(list.Centroid) === -1) {
                 centroid_data.push(list.Centroid)

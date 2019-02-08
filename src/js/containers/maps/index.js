@@ -9,10 +9,7 @@ import Papa from 'papaparse'
 import Legends from '../../components/legends'
 import CollapseComponent from '../../components/collapse'
 import CreateMap from './functions/render-maps'
-// import datacsv from '../../data/LGA_Centroid_Test.csv';
-import datacsv from '../../data/sample_data.csv';
-// import datacsv from '../../data/Rural_Combined_Cohorts_Oct-Dec18.csv';
-// import datacsv from '../../data/SCF_Master_Table_Joined_F.csv';
+import Datasets from '../../data'
 import { modifyScale, resetSettings } from '../../redux/actions/filter-action'
 import { statistics_array, convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
 
@@ -86,7 +83,7 @@ class RenderMaps extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         let { reload } = nextProps
-        let { name } = this.props
+        let { name, dataset } = this.props
 
         if (this.state.reload !== nextState.reload) {
             this.setState({
@@ -96,7 +93,7 @@ class RenderMaps extends Component {
         }
 
         if (reload[name]) {
-            Papa.parse(datacsv, {
+            Papa.parse(Datasets[dataset], {
                 header: true,
                 download: true,
                 skipEmptyLines: true,
