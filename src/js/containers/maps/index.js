@@ -248,7 +248,7 @@ class RenderMaps extends Component {
     render() {
         let { count, max_radius, min_radius, statistics } = this.state
         let { division, name } = this.props
-
+        
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">

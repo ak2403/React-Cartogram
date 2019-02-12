@@ -2,14 +2,13 @@ import * as filterTypes from '../types/filter-types'
 
 let initialState = {
     reload: {},
-    maps: [{
-        title: 'Maps_1',
-        dataset: 'sample_data'
-    }],
-    is_dual: false,
-    calculations: {
-        compareone: "@Arrived at within 15 "
+    maps: {
+        Maps_1: {
+            dataset: 'sample_data'
+        }
     },
+    is_dual: false,
+    calculations: {},
     colors: {},
     filter_options: {},
     color_picker: {},
@@ -24,8 +23,18 @@ let initialState = {
 const FilterReducer = (state = initialState, action) => {
     switch (action.type) {
         case filterTypes.ADD_NEW_MAPS:
+            let maps_key = [...Object.keys(state.maps), action.payload.title]
+            let reload_obj = {}
+            maps_key.map(list => reload_obj[list] = true)
+
             return Object.assign({}, state, {
-                maps: [...state.maps, action.payload]
+                maps: {
+                    [action.payload.title]: {
+                        dataset: action.payload.dataset
+                    },
+                    ...state.maps
+                },
+                reload: reload_obj
             })
 
         case filterTypes.SWITCH_SCREEN:

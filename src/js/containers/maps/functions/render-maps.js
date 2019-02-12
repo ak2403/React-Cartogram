@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import { calculateDistance } from '../../../default'
 
 const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
     var element = d3.select(`.${name}`).node();
@@ -24,6 +25,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     //create projection
     let b0 = [coordinates['topLong'], coordinates['topLat']]
     let b1 = [coordinates['bottomLong'], coordinates['bottomLat']]
+
+    calculateDistance(b0, b1)
 
     //create projection
     var projection = d3.geo.mercator()

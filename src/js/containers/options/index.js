@@ -30,6 +30,17 @@ class Options extends Component {
             complete: this.updateData
         });
     }
+    shouldComponentUpdate(nextProps){
+        if(nextProps.name !== this.props.name){
+            Papa.parse(Datasets[nextProps.dataset], {
+                header: true,
+                download: true,
+                skipEmptyLines: true,
+                complete: this.updateData
+            }); 
+        }
+        return true
+    }
 
     updateData(result) {
         let { centroid_data } = this.state
@@ -40,6 +51,7 @@ class Options extends Component {
                 centroid_data.push(list.Centroid)
             }
         })
+        
         this.setState({
             centroid_data,
             headers: result.meta.fields

@@ -80,9 +80,9 @@ class Main extends Component {
                             </div>
                         </React.Fragment>} */}
 
-                    {maps.map(list => <div className="map-layer">
-                        <Maps name={list.title} dataset={list.dataset} />
-                        <Options name={list.title} dataset={list.dataset} />
+                    {Object.keys(maps).map(list => <div className="map-layer">
+                        <Maps name={list} dataset={maps[list].dataset} />
+                        <Options name={list} dataset={maps[list].dataset} />
                     </div>)}
 
 
