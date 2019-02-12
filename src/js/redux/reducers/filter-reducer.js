@@ -3,9 +3,6 @@ import * as filterTypes from '../types/filter-types'
 let initialState = {
     reload: {},
     maps: {
-        Maps_1: {
-            dataset: 'sample_data'
-        }
     },
     is_dual: false,
     calculations: {},

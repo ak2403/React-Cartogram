@@ -92,5 +92,13 @@ export const calculateDistance = (start, end) => {
         ;
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
-    console.log(d);
+console.log(d)
+    if(d <= 300){
+        return 20000
+    }else if(d < 701 && d > 300){
+        return 5000
+        // return 5000
+    }else{
+        return 4000
+    }
 }

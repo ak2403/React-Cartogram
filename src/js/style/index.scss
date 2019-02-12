@@ -12,11 +12,12 @@ body{
     height: 700px;
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;    
 }
 .map-layer{
-    flex: 1;
+    width: 50%;
     position: relative;
-    margin: 0 10px;
+    padding: 0 10px;
 }
 .header-layout{
     width: 100%;

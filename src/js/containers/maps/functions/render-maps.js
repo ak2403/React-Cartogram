@@ -26,13 +26,11 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     let b0 = [coordinates['topLong'], coordinates['topLat']]
     let b1 = [coordinates['bottomLong'], coordinates['bottomLat']]
 
-    calculateDistance(b0, b1)
-
     //create projection
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
         // .scale(20000)
-        .scale(scale_val || 20000)
+        .scale(scale_val || calculateDistance(b0, b1))
         .translate([width / 2, height / 2])
         .precision(0.1);
 
@@ -54,7 +52,6 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         })
 
         let size_value = eval(new_formula)
-        // debugger
 
         if (max_size < size_value) {
             max_size = size_value
@@ -82,7 +79,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
             min_color = color_value
         }
 
-        if (d.Centroid !== '0') {
+        if (!Number.isNaN(point[0]) && !Number.isNaN(point[1])) {
             nodes.push({
                 name: d.Centroid,
                 apply_gray: d.is_centroid_filter,
@@ -123,6 +120,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         })
         .attr("r", function (d) {
             return radius(d.value)
+            // return 4
         })
         .style("fill", function (d) {
             let colors = d.default_color
