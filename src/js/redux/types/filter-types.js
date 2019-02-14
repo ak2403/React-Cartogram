@@ -1,4 +1,5 @@
 export const ADD_NEW_MAPS = 'add a new maps'
+export const DELETE_LAYER = 'delete the map layer from the screen'
 export const SWITCH_SCREEN = 'switch the screens'
 export const SUBMIT_FILTER = 'submit the filter data'
 export const CHANGE_COLOR_PICKER = 'change the color picker for the maps'

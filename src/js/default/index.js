@@ -12,6 +12,9 @@ export const datasets = [{
 }, {
     text: 'Rural Combined',
     path: 'rural_combined'
+}, {
+    text: 'SCF Master',
+    path: 'scf_master'
 }]
 
 export const filter_options = [{

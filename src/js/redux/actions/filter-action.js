@@ -73,6 +73,11 @@ export const setCentroidFilter = (key, value) => ({
     key: key
 })
 
+export const deleteLayer = key => ({
+    type: filterTypes.DELETE_LAYER,
+    payload: key
+})
+
 export const resetSettings = key => ({
     type: filterTypes.RESET_SETTINGS,
     key: key

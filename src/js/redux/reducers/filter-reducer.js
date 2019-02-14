@@ -34,6 +34,18 @@ const FilterReducer = (state = initialState, action) => {
                 reload: reload_obj
             })
 
+        case filterTypes.DELETE_LAYER:
+            let refined_maps = state.maps
+            delete refined_maps[action.payload]
+            let refined_maps_key = [...Object.keys(refined_maps)]
+            let refined_reload_obj = {}
+            refined_maps_key.map(list => refined_reload_obj[list] = true)
+
+            return Object.assign({}, state, {
+                maps: refined_maps,
+                reload: refined_reload_obj
+            })
+
         case filterTypes.SWITCH_SCREEN:
             return Object.assign({}, state, {
                 is_dual: action.payload

@@ -1,19 +1,13 @@
 import React, { Component } from "react";
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Radio, Button, Modal } from 'antd';
+import { Button, Modal } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import _ from 'lodash';
 import Maps from './containers/maps'
 import Options from "./containers/options/index.js";
 import AddMaps from './components/addmaps-modal';
-import { switchScreen } from './redux/actions/filter-action'
-
-import lga from './data/LGA_Centroid_Test.csv';
-import sample_data from './data/sample_data.csv';
-// import datacsv from './data/Rural_Combined_Cohorts_Oct-Dec18.csv';
-// import datacsv from './data/SCF_Master_Table_Joined_F.csv';
-
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
+import { switchScreen, deleteLayer } from './redux/actions/filter-action'
 
 class Main extends Component {
     constructor() {
@@ -26,6 +20,11 @@ class Main extends Component {
         this.showModal = this.showModal.bind(this)
         this.handleOk = this.handleOk.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
+        this.deleteLayer = this.deleteLayer.bind(this)
+    }
+
+    deleteLayer(list){
+        this.props.deleteLayer(list)
     }
 
     showModal() {
@@ -62,7 +61,7 @@ class Main extends Component {
                         <RadioButton value="single">Single</RadioButton>
                         <RadioButton value="compare">Compare</RadioButton>
                     </RadioGroup> */}
-                    <Button onClick={this.showModal}>Modal</Button>
+                    <Button onClick={this.showModal}>Add a map</Button>
                 </div>
                 <div className="maps-layout">
                     {/* {!is_dual ? <div className="map-layer">
@@ -81,6 +80,7 @@ class Main extends Component {
                         </React.Fragment>} */}
 
                     {Object.keys(maps).map(list => <div className="map-layer">
+                        <h2>{list} <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h2>
                         <Maps name={list} dataset={maps[list].dataset} />
                         <Options name={list} dataset={maps[list].dataset} />
                     </div>)}
@@ -111,12 +111,13 @@ const mapStateToProps = props => {
 
     return {
         is_dual: filters.is_dual,
-        maps: filters.maps
+        maps: _.cloneDeep(filters.maps)
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    switchScreen
+    switchScreen,
+    deleteLayer
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
