@@ -10,7 +10,7 @@ import Legends from '../../components/legends'
 import CollapseComponent from '../../components/collapse'
 import CreateMap from './functions/render-maps'
 import Datasets from '../../data'
-import { modifyScale, resetSettings } from '../../redux/actions/filter-action'
+import { modifyScale, updateStatistics, resetSettings } from '../../redux/actions/filter-action'
 import { statistics_array, convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
 
 const ButtonGroup = Button.Group;
@@ -123,17 +123,17 @@ class RenderMaps extends Component {
         }
         let statistics_data = {}
 
-        if (size_switch[name] && size_switch[name].switch) {
-            size_equation = calculations[size_switch[name].target] || ''
+        if (size_switch[name]) {
+            size_equation = calculations[size_switch[name]]
         }
 
         if (filter_switch[name] && filter_switch[name].switch) {
             filters = filter_options[filter_switch[name].target]
         }
 
-        if (color_equation_switch[name] && color_equation_switch[name].switch) {
-            color_equation = division[color_equation_switch[name].target] || []
-            color_array = colors[color_equation_switch[name].target] || []
+        if (color_equation_switch[name]) {
+            color_equation = division[color_equation_switch[name]]
+            color_array = colors[color_equation_switch[name]]
         }
 
         let filtered_data = {}
@@ -235,6 +235,10 @@ class RenderMaps extends Component {
         })
 
         let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array)
+        for(let key in statistics_data){
+            delete statistics_data[key].values
+        }
+        this.props.updateStatistics(name, statistics_data)
         this.setState({
             statistics: statistics_data,
             headers: result.meta.fields,
@@ -288,7 +292,7 @@ const mapStateToProps = props => {
         color_picker: filters.color_picker,
         division: filters.division,
         scale: filters.scale,
-        calculations: filters.calculations,
+        calculations: _.cloneDeep(filters.calculations),
         colors: filters.colors,
         filter_switch: filters.filter_switch,
         color_equation_switch: filters.color_equation_switch,
@@ -299,6 +303,7 @@ const mapStateToProps = props => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     modifyScale,
+    updateStatistics,
     resetSettings
 }, dispatch)
 

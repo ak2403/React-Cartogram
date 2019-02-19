@@ -5,6 +5,18 @@ export const addMaps = value => ({
     payload: value
 })
 
+export const updateBubbleSize = (key, data) => ({
+    type: filterTypes.UPDATE_BUBBLE_SIZE,
+    payload: data,
+    key: key
+})
+
+export const updateStatistics = (key, data) => ({
+    type: filterTypes.UPDATE_STATISTICS,
+    payload: data,
+    key: key
+})
+
 export const switchScreen = value => ({
     type: filterTypes.SWITCH_SCREEN,
     payload: value
@@ -53,18 +65,16 @@ export const switchFilters = (key, value, target) => ({
     target: target
 })
 
-export const switchColorEquation = (key, value, target) => ({
+export const switchColorEquation = (key, value) => ({
     type: filterTypes.SWITCH_COLOR_EQUATION,
     payload: value,
-    key: key,
-    target: target
+    key: key
 })
 
-export const switchSizeEquation = (key, value, target) => ({
+export const switchSizeEquation = (key, value) => ({
     type: filterTypes.SWITCH_SIZE_EQUATION,
     payload: value,
-    key: key,
-    target: target
+    key: key
 })
 
 export const setCentroidFilter = (key, value) => ({

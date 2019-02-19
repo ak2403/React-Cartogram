@@ -123,7 +123,7 @@ class Filters extends Component {
         let switch_val = filter_switch[name] ? filter_switch[name].switch : false
 
         return (<div className="options-layout">
-            <h3>Filters
+            <h3>Time Filters
             <Tooltip placement="rightTop" title={"Specify the options to filter the data"}>
                     <FontAwesomeIcon className="info-icon" icon="info-circle" />
                 </Tooltip> {is_dual ?

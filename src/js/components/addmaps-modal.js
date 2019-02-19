@@ -22,6 +22,7 @@ class AddMaps extends Component {
 
     onSubmit() {
         this.props.addMaps(this.state.new_map)
+        this.props.toggle()
     }
 
     onChange(name, value) {

@@ -79,7 +79,7 @@ export const compulsory_element = ['Year', 'Month', 'Day_of_Week', 'Hour_of_Day'
 
 export const non_compulsory_element = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases']
 
-export const statistics_array = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases']
+export const statistics_array = ['Count', 'Arrived_at_C1', 'Did not arrive within 15', 'Arrived at within 15', 'Total Cases', 'Not_Arrived', 'Arrived_Under_15', 'Not Arrived', 'Over_15', 'Under_15', 'Grand Total']
 
 export const calculateDistance = (start, end) => {
     function deg2rad(deg) {
@@ -95,7 +95,7 @@ export const calculateDistance = (start, end) => {
         ;
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
-console.log(d)
+
     if(d <= 300){
         return 20000
     }else if(d < 701 && d > 300){

@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import uuid from 'uuid/v4'
-import { Tooltip, Switch } from 'antd';
+import { Tooltip, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorPicker from '../../../components/color-picker'
 import { setDivision, setColorEquation, switchColorEquation } from '../../../redux/actions/filter-action'
 import Equations from '../../../components/equations';
+
+const Option = Select.Option;
 
 class DivisionColor extends Component {
     constructor() {
@@ -46,7 +48,7 @@ class DivisionColor extends Component {
 
     switchFilter(value) {
         let { name } = this.props
-        this.props.switchColorEquation(name, value, name === 'compareone' ? 'comparetwo' : 'compareone')
+        this.props.switchColorEquation(name, value)
     }
 
     addColor() {
@@ -151,7 +153,7 @@ class DivisionColor extends Component {
     }
 
     render() {
-        let { headers, division, name, colors, is_dual, color_equation_switch } = this.props
+        let { headers, division, name, colors, maps, color_equation_switch } = this.props
 
         const columns = [{
             title: 'From',
@@ -167,7 +169,7 @@ class DivisionColor extends Component {
             key: 'color',
         }];
 
-        let switch_val = color_equation_switch[name] ? color_equation_switch[name].switch : false
+        let maps_keys = Object.keys(maps)
 
         return (<div className="options-layout">
             <h3>
@@ -175,12 +177,12 @@ class DivisionColor extends Component {
                 <Tooltip placement="rightTop" title={"Specify the equation which determines the color  of the circle"}>
                     <FontAwesomeIcon className="info-icon" icon="info-circle" />
                 </Tooltip>
-                {is_dual ?
-                    <span style={{ float: 'right', fontSize: '12px' }}>
-                        Swap Map filter
-                    <Switch size="small" checked={switch_val} onChange={this.switchFilter} />
-                    </span>
-                    : ''}
+                <span style={{ float: 'right', fontSize: '12px' }}>
+                    Swap
+                        <Select size="small" style={{ width: 100 }} onChange={this.switchFilter}>
+                        {maps_keys.map(list => <Option value={list}>{list}</Option>)}
+                    </Select>
+                </span>
             </h3>
 
             <Equations options={headers} onSubmit={this.onEquationSubmit} />
@@ -230,7 +232,7 @@ const mapStateToProps = props => {
         division: filters.division,
         colors: filters.colors,
         color_equation_switch: filters.color_equation_switch,
-        is_dual: filters.is_dual
+        maps: filters.maps
     }
 }
 

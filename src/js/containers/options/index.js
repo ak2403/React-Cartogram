@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Papa from 'papaparse'
 import Filters from './children/filters'
 import General from './children/general'
 import CentroidFilters from './children/centroid-filter'
 import Calculation from './children/Calculation'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import SizeOption from './children/size-option'
 import DivisionColor from './children/color-division'
 import Datasets from '../../data'
 
@@ -71,10 +72,11 @@ class Options extends Component {
                     <FontAwesomeIcon className="icons" icon="times-circle" onClick={this.toggleView} />
                 </div>
                 <Calculation name={name} headers={headers} />
+                <DivisionColor name={name} headers={headers} />
+                <SizeOption />
                 <General name={name} />
                 {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} /> : ''}
                 <Filters name={name} centroid_data={centroid_data} />
-                <DivisionColor name={name} headers={headers} />
             </div> : <div className="float-icon">
                     <FontAwesomeIcon className="icons" icon="filter" onClick={this.toggleView} />
                 </div>}

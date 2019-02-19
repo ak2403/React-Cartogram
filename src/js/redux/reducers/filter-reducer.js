@@ -2,9 +2,8 @@ import * as filterTypes from '../types/filter-types'
 
 let initialState = {
     reload: {},
-    maps: {
-    },
-    is_dual: false,
+    maps: {},
+    statistics: {},
     calculations: {},
     colors: {},
     filter_options: {},
@@ -14,7 +13,8 @@ let initialState = {
     filter_switch: {},
     color_equation_switch: {},
     size_switch: {},
-    centroid_filters: {}
+    centroid_filters: {},
+    bubble_size: {}
 }
 
 const FilterReducer = (state = initialState, action) => {
@@ -34,6 +34,26 @@ const FilterReducer = (state = initialState, action) => {
                 reload: reload_obj
             })
 
+        case filterTypes.UPDATE_BUBBLE_SIZE:
+            return Object.assign({}, state, {
+                bubble_size: {
+                    ...state.bubble_size,
+                    [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
+        case filterTypes.UPDATE_STATISTICS:
+            return Object.assign({}, state, {
+                statistics: {
+                    ...state.statistics,
+                    [action.key]: action.payload
+                }
+            })
+
         case filterTypes.DELETE_LAYER:
             let refined_maps = state.maps
             delete refined_maps[action.payload]
@@ -42,13 +62,8 @@ const FilterReducer = (state = initialState, action) => {
             refined_maps_key.map(list => refined_reload_obj[list] = true)
 
             return Object.assign({}, state, {
-                maps: refined_maps,
+                maps: Object.assign({}, refined_maps),
                 reload: refined_reload_obj
-            })
-
-        case filterTypes.SWITCH_SCREEN:
-            return Object.assign({}, state, {
-                is_dual: action.payload
             })
 
         case filterTypes.SET_CENTROID_FILTER:
@@ -67,10 +82,7 @@ const FilterReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 color_equation_switch: {
                     ...state.color_equation_switch,
-                    [action.key]: {
-                        switch: action.payload,
-                        target: action.target
-                    }
+                    [action.key]: action.payload
                 },
                 reload: {
                     ...state.reload,
@@ -82,10 +94,7 @@ const FilterReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 size_switch: {
                     ...state.size_switch,
-                    [action.key]: {
-                        switch: action.payload,
-                        target: action.target
-                    }
+                    [action.key]: action.payload
                 },
                 reload: {
                     ...state.reload,

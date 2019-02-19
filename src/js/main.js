@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Button, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import _ from 'lodash';
+import uuid from 'uuid/v4'
 import Maps from './containers/maps'
 import Options from "./containers/options/index.js";
 import AddMaps from './components/addmaps-modal';
@@ -51,7 +52,7 @@ class Main extends Component {
 
     render() {
         let { visible } = this.state
-        let { is_dual, maps } = this.props
+        let { maps } = this.props
 
         return (
             <div className="container adjust-width">
@@ -79,8 +80,8 @@ class Main extends Component {
                             </div>
                         </React.Fragment>} */}
 
-                    {Object.keys(maps).map(list => <div className="map-layer">
-                        <h2>{list} <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h2>
+                    {Object.keys(maps).map(list => <div className="map-layer" key={uuid()}>
+                        <h5>{list} <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h5>
                         <Maps name={list} dataset={maps[list].dataset} />
                         <Options name={list} dataset={maps[list].dataset} />
                     </div>)}
@@ -98,7 +99,7 @@ class Main extends Component {
                         onCancel={this.handleCancel}
                         footer=""
                     >
-                        <AddMaps />
+                        <AddMaps key={uuid()} toggle={this.handleCancel} />
                     </Modal>
                 </div>
             </div>
@@ -110,8 +111,7 @@ const mapStateToProps = props => {
     let { filters } = props
 
     return {
-        is_dual: filters.is_dual,
-        maps: _.cloneDeep(filters.maps)
+        maps: filters.maps
     }
 }
 

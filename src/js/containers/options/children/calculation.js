@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { Mention, Tooltip, Switch } from 'antd';
+import { Mention, Tooltip, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { setCalculation, switchSizeEquation } from '../../../redux/actions/filter-action'
 import { compulsory_element } from '../../../default'
 
 const { toString, toContentState } = Mention;
+const Option = Select.Option;
 
 class Calculation extends Component {
     constructor() {
@@ -17,12 +18,12 @@ class Calculation extends Component {
         }
         this.onChange = this.onChange.bind(this)
         this.submit = this.submit.bind(this)
-        this.switchSize=this.switchSize.bind(this)
+        this.switchSize = this.switchSize.bind(this)
     }
 
-    switchSize(value){
+    switchSize(value) {
         let { name } = this.props
-        this.props.switchSizeEquation(name, value, name === 'compareone' ? 'comparetwo' : 'compareone')
+        this.props.switchSizeEquation(name, value)
     }
 
     onChange(value) {
@@ -36,29 +37,31 @@ class Calculation extends Component {
     }
 
     render() {
-        let { headers, calculations, name, is_dual, size_switch } = this.props
+        let { headers, calculations, name, maps, size_switch } = this.props
 
         let filtered_headers = _.filter(headers, list => {
-            if(compulsory_element.indexOf(list) === -1){
+            if (compulsory_element.indexOf(list) === -1) {
                 return true
-            }else{
+            } else {
                 return false
             }
         })
-
-        let switch_val = size_switch[name] ? size_switch[name].switch : false
+        
+        let maps_keys = Object.keys(maps)
+        // maps_keys.splice(maps_keys.indexOf(name) ,1)
 
         return (<div className="options-layout">
-            <h3>Equations Size 
+            <h3>Equations Size
                 <Tooltip placement="rightTop" title={"Specify the equation which determines the size of the circle"}>
-                <FontAwesomeIcon className="info-icon" icon="info-circle" />
+                    <FontAwesomeIcon className="info-icon" icon="info-circle" />
                 </Tooltip>
-                {is_dual ?
-                    <span style={{ float: 'right', fontSize: '12px' }}>
-                        Swap Map filter
-                    <Switch size="small" checked={switch_val} onChange={this.switchSize} />
-                    </span>
-                    : ''}</h3>
+                <span style={{ float: 'right', fontSize: '12px' }}>
+                    Swap
+                        <Select size="small" style={{ width: 100 }} onChange={this.switchSize}>
+                        {maps_keys.map(list => <Option value={list}>{list}</Option>)}
+                    </Select>
+                </span>
+            </h3>
 
             <div className="division-options">
                 <Mention
@@ -83,8 +86,8 @@ const mapStateToProps = props => {
     let { filters } = props
     return {
         calculations: filters.calculations,
-        is_dual: filters.is_dual,
-        size_switch: filters.size_switch
+        size_switch: filters.size_switch,
+        maps: filters.maps
     }
 }
 
