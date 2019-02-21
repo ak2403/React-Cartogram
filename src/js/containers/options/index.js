@@ -73,7 +73,7 @@ class Options extends Component {
                 </div>
                 <Calculation name={name} headers={headers} />
                 <DivisionColor name={name} headers={headers} />
-                <SizeOption />
+                <SizeOption name={name} />
                 <General name={name} />
                 {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} /> : ''}
                 <Filters name={name} centroid_data={centroid_data} />

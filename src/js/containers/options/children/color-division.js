@@ -195,10 +195,10 @@ class DivisionColor extends Component {
                     {division[name] ? division[name].map((list, index) => {
                         return <div key={uuid()} className="color-row">
                             <div className="column-color-row">
-                                <input value={list.from} onChange={e => this.divisionChange('from', index, e.target.value)} />
+                                <input defaultValue={list.from} onChange={e => this.divisionChange('from', index, e.target.value)} />
                             </div>
                             <div className="column-color-row">
-                                <input value={list.to} onChange={e => this.divisionChange('to', index, e.target.value)} />
+                                <input defaultValue={list.to} onChange={e => this.divisionChange('to', index, e.target.value)} />
                             </div>
                             <div className="column-color-row">
                                 <ColorPicker hideText={true} color_picker={list.color} changeColorPicker={(color) => this.divisionChange('color', index, color)} />

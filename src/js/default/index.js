@@ -15,6 +15,18 @@ export const datasets = [{
 }, {
     text: 'SCF Master',
     path: 'scf_master'
+},{
+    text: 'RefCase',
+    path: 'RefCase'
+}, {
+    text: 'SmallBM',
+    path: 'SmallBM'
+}, {
+    text: 'BMV2',
+    path: 'BMV2'
+}, {
+    text: 'BMV1',
+    path: 'BMV1'
 }]
 
 export const filter_options = [{
@@ -96,11 +108,12 @@ export const calculateDistance = (start, end) => {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
 
-    if(d <= 300){
+    if(d <=150){
+        return 30000
+    }else if(d > 150 && d <= 300){
         return 20000
     }else if(d < 701 && d > 300){
         return 5000
-        // return 5000
     }else{
         return 4000
     }

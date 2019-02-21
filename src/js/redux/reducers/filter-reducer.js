@@ -46,6 +46,18 @@ const FilterReducer = (state = initialState, action) => {
                 }
             })
 
+        case filterTypes.CLEAR_BUBBLE_SIZE:
+            let duplicate_bubble_props = Object.assign({}, state.bubble_size)
+            delete duplicate_bubble_props[action.payload]
+
+            return Object.assign({}, state, {
+                bubble_size: duplicate_bubble_props,
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
         case filterTypes.UPDATE_STATISTICS:
             return Object.assign({}, state, {
                 statistics: {

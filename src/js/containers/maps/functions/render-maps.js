@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import { calculateDistance } from '../../../default'
 
-const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation) => {
+const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation, range_props) => {
     var element = d3.select(`.${name}`).node();
     var width = element.getBoundingClientRect().width;
     var height = 600;
@@ -37,7 +37,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     let nodes = []
 
     for (var i in data) {
-        let d = data[i]
+        let d = data[i],
+            data_valid = true
 
         var point = projection([d[keys.longitude], d[keys.latitude]])
 
@@ -71,15 +72,27 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
 
         let color_value = eval(color_eq)
 
-        if (max_color < color_value) {
-            max_color = color_value
+        if (range_props.max) {
+            max_color = range_props.max
+            data_valid = size_value < range_props.max ? true : false
+        } else {
+            if (max_color < color_value) {
+                max_color = color_value
+            }
         }
 
-        if (min_color > color_value) {
-            min_color = color_value
+        if (range_props.min) {
+            min_color = range_props.min
+            if(data_valid){
+            data_valid = size_value > range_props.min ? true : false
+            }
+        } else {
+            if (min_color > color_value) {
+                min_color = color_value
+            }
         }
 
-        if (!Number.isNaN(point[0]) && !Number.isNaN(point[1])) {
+        if (!Number.isNaN(point[0]) && !Number.isNaN(point[1]) && data_valid) {
             nodes.push({
                 name: d.Centroid,
                 apply_gray: d.is_centroid_filter,

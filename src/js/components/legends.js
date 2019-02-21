@@ -8,10 +8,13 @@ const Legends = props => {
     let division_obj = []
     let start_min = 0
 
+    let difference = max_radius-min_radius
     for (let i = 0; i < data.length; i++) {
+        let from_range = (difference*data[i].from)/100
+        let to_range = (difference*data[i].to)/100
         division_obj.push({
-            min: start_min,
-            max: start_min + division_range,
+            min: min_radius+from_range,
+            max: min_radius + to_range,
             color: data[i].color
         })
         start_min += division_range

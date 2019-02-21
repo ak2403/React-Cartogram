@@ -1,6 +1,7 @@
 export const ADD_NEW_MAPS = 'add a new maps'
 export const UPDATE_STATISTICS = 'update the statistics of the map'
 export const UPDATE_BUBBLE_SIZE = 'update the min and max of the bubble size'
+export const CLEAR_BUBBLE_SIZE = 'clear the bubble size config'
 export const DELETE_LAYER = 'delete the map layer from the screen'
 export const SWITCH_SCREEN = 'switch the screens'
 export const SUBMIT_FILTER = 'submit the filter data'

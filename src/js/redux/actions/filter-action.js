@@ -11,6 +11,11 @@ export const updateBubbleSize = (key, data) => ({
     key: key
 })
 
+export const clearBubbleSize = key => ({
+    type: filterTypes.CLEAR_BUBBLE_SIZE,
+    payload: key
+})
+
 export const updateStatistics = (key, data) => ({
     type: filterTypes.UPDATE_STATISTICS,
     payload: data,

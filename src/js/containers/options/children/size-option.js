@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import { Mention, Tooltip, Select, Button } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {updateBubbleSize} from '../../../redux/actions'
+import { updateBubbleSize, clearBubbleSize } from '../../../redux/actions/filter-action'
 
 const { toString, toContentState } = Mention;
 const Option = Select.Option;
@@ -25,10 +25,15 @@ class SizeOption extends Component {
         this.parentChange = this.parentChange.bind(this)
         this.childChange = this.childChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
+        this.onClear = this.onClear.bind(this)
     }
 
-    onSubmit(){
+    onSubmit() {
         this.props.updateBubbleSize(this.props.name, this.state)
+    }
+
+    onClear(){
+        this.props.clearBubbleSize(this.props.name)
     }
 
     parentChange(key, value) {
@@ -64,7 +69,7 @@ class SizeOption extends Component {
                 </Tooltip>
             </h3>
 
-            <div className="division-options">
+            <div className="division-options justify-flex">
                 Min
                 <Select size="small" style={{ width: 100 }} onChange={value => this.parentChange('min', value)}>
                     {option_values.map(list => <Option value={list}>{list}</Option>)}
@@ -74,7 +79,7 @@ class SizeOption extends Component {
                 </Select>
             </div>
 
-            <div className="division-options">
+            <div className="division-options justify-flex">
                 Max
                 <Select size="small" style={{ width: 100 }} onChange={value => this.parentChange('max', value)}>
                     {option_values.map(list => <Option value={list}>{list}</Option>)}
@@ -85,6 +90,7 @@ class SizeOption extends Component {
             </div>
 
             <Button onClick={this.onSubmit}>Submit</Button>
+            <Button onClick={this.onClear}>Clear</Button>
         </div>)
     }
 }
@@ -97,7 +103,8 @@ const mapStateToProps = props => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    updateBubbleSize
+    updateBubbleSize,
+    clearBubbleSize
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SizeOption)

@@ -109,7 +109,7 @@ class RenderMaps extends Component {
 
     updateData(result) {
         let { count } = this.state
-        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters } = this.props
+        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters, bubble_size, statistics } = this.props
         let filters = filter_options[name] || []
         let color_equation = division[name] || []
         let color_array = colors[name] || []
@@ -122,6 +122,20 @@ class RenderMaps extends Component {
             bottomLong: 0
         }
         let statistics_data = {}
+        let range_object = {
+            min: '',
+            max: ''
+        }
+        
+        if(bubble_size[name]){
+            let range_props = bubble_size[name]
+            if(range_props.max && statistics[range_props.max.map] && statistics[range_props.max.map][range_props.max.column]){
+                range_object.max = statistics[range_props.max.map][range_props.max.column].max[range_props.max.column]
+            }
+            if(range_props.min && statistics[range_props.min.map] && statistics[range_props.min.map][range_props.min.column]){
+                range_object.min = statistics[range_props.min.map][range_props.min.column].min[range_props.min.column]
+            }
+        }
 
         if (size_switch[name]) {
             size_equation = calculations[size_switch[name]]
@@ -149,7 +163,7 @@ class RenderMaps extends Component {
         }
         
         for(let i=0;i< headers.length;i++){
-            if(headers[i].toLowerCase().indexOf('long') !== -1){
+            if(headers[i].toLowerCase().indexOf('lon') !== -1){
                 getKeys.longitude = headers[i]
             }
             if(headers[i].toLowerCase().indexOf('lat') !== -1){
@@ -234,7 +248,7 @@ class RenderMaps extends Component {
             }
         })
 
-        let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array)
+        let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array, range_object)
         for(let key in statistics_data){
             delete statistics_data[key].values
         }
@@ -252,6 +266,8 @@ class RenderMaps extends Component {
     render() {
         let { count, max_radius, min_radius, statistics } = this.state
         let { division, name } = this.props
+
+        // console.log(division[name])
         
         return (
             <div className="maps-display">
@@ -297,7 +313,9 @@ const mapStateToProps = props => {
         filter_switch: filters.filter_switch,
         color_equation_switch: filters.color_equation_switch,
         size_switch: filters.size_switch,
-        reload: filters.reload
+        reload: filters.reload,
+        bubble_size: _.cloneDeep(filters.bubble_size),
+        statistics: filters.statistics
     }
 }
 
