@@ -14,6 +14,24 @@ body{
     justify-content: space-around;
     flex-wrap: wrap;    
 }
+.smoke-screen{
+    width: 100%;
+    min-height: 700px;
+    max-height: 700px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 5px;
+    .smoke-content{
+        width: 40%;
+        p{
+            text-align: center;
+        }
+    }
+}
 .map-layer{
     width: 49%;
     min-height: 700px;
@@ -25,6 +43,9 @@ body{
     border-radius: 5px;
     padding: 5px;
     margin: 2px;
+}
+.sub-info{
+    font-size: 14px;
 }
 .header-layout{
     width: 100%;

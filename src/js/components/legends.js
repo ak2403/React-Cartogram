@@ -6,7 +6,6 @@ const Legends = props => {
 
     let division_range = (max_radius + min_radius) / data.length
     let division_obj = []
-    let start_min = 0
 
     let difference = max_radius-min_radius
     for (let i = 0; i < data.length; i++) {
@@ -23,7 +22,7 @@ const Legends = props => {
     return <div className="maps-legends">
         {division_obj.map(list => {
             return (<div key={uuid()} className="legends">
-                <div className="legends-color" style={{ backgroundColor: list.color }}></div> <span>{`${Math.round(list.min)}`} - {`${Math.round(list.max)}`}</span>
+                <div className="legends-color" style={{ backgroundColor: list.color }}></div> <span>{`${Math.round(list.min * 100) / 100}`} - {`${Math.round(list.max * 100) / 100}`}</span>
             </div>)
         })}
     </div>

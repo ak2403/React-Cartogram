@@ -24,7 +24,7 @@ class Main extends Component {
         this.deleteLayer = this.deleteLayer.bind(this)
     }
 
-    deleteLayer(list){
+    deleteLayer(list) {
         this.props.deleteLayer(list)
     }
 
@@ -58,33 +58,25 @@ class Main extends Component {
             <div className="container adjust-width">
                 <div className="header-layout">
                     <h3>Ambulance Victoria</h3>
-                    {/* <RadioGroup onChange={this.onChange} size='small'>
-                        <RadioButton value="single">Single</RadioButton>
-                        <RadioButton value="compare">Compare</RadioButton>
-                    </RadioGroup> */}
                     <Button onClick={this.showModal}>Add a map</Button>
                 </div>
                 <div className="maps-layout">
-                    {/* {!is_dual ? <div className="map-layer">
-                        <Maps name="compareone" />
-                        <Options name="compareone" />
-                    </div> :
-                        <React.Fragment>
-                            <div className="map-layer">
-                                <Maps name="compareone" />
-                                <Options name="compareone" />
+                    {Object.keys(maps).length === 0 ?
+                        <div className="smoke-screen">
+                            <div className="smoke-content">
+                                <p>There is no maps to display. Please add a new map.</p>
+                                <h6>Steps to add a new map:</h6>
+                                <ul>
+                                    <li>Click on the 'Add new map' button</li>
+                                    <li>Give the name for the map ( The name should be unique ) and select a dataset for the map</li>
+                                </ul>
                             </div>
-                            <div className="map-layer">
-                                <Maps name="comparetwo" />
-                                <Options name="comparetwo" />
-                            </div>
-                        </React.Fragment>} */}
-
-                    {Object.keys(maps).map(list => <div className="map-layer" key={uuid()}>
-                        <h5>{list} <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h5>
-                        <Maps name={list} dataset={maps[list].dataset} />
-                        <Options name={list} dataset={maps[list].dataset} />
-                    </div>)}
+                        </div>
+                        : Object.keys(maps).map(list => <div className="map-layer" key={uuid()}>
+                            <h5>{list} <span className="sub-info">({maps[list].dataset})</span> <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h5>
+                            <Maps name={list} dataset={maps[list].dataset} />
+                            <Options name={list} dataset={maps[list].dataset} />
+                        </div>)}
 
 
                     <div className="custom-tooltip">

@@ -32,6 +32,7 @@ class DivisionColor extends Component {
                 to: '100',
                 color: '#9b59b6'
             }],
+            dont_load: false,
             show_palette: false
         }
         this.addField = this.addField.bind(this)
@@ -44,6 +45,13 @@ class DivisionColor extends Component {
         this.addColor = this.addColor.bind(this)
         this.removeColor = this.removeColor.bind(this)
         this.switchFilter = this.switchFilter.bind(this)
+    }
+
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextState.dont_load){
+            return false
+        }
+        return true
     }
 
     switchFilter(value) {
@@ -87,7 +95,8 @@ class DivisionColor extends Component {
         }
         division_data[index][key] = value
         this.setState({
-            division_data
+            division_data,
+            dont_load: true
         })
     }
 
