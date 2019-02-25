@@ -7,8 +7,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     var height = 600;
     var padding = 3;
 
-    let max_size = 0;
-    let min_size = 0;
+    let max_size = '';
+    let min_size = '';
     let min_color = 0;
     let max_color = 0;
 
@@ -29,7 +29,6 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     //create projection
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
-        // .scale(20000)
         .scale(scale_val || calculateDistance(b0, b1))
         .translate([width / 2, height / 2])
         .precision(0.1);
@@ -42,8 +41,6 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
 
         var point = projection([d[keys.longitude], d[keys.latitude]])
 
-        // count < 6 ? count += 1 : count = 0
-
         let new_formula = (' ').concat(calculation).slice(1)
 
         Object.keys(d).map(key => {
@@ -52,13 +49,17 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
             }
         })
 
-        let size_value = eval(new_formula)
+        let size_value = eval(new_formula.replace(/[^a-zA-Z0-9. ]/g, ""))
 
-        if (max_size < size_value) {
+        if(!max_size){
+            max_size = size_value
+        } else if (max_size < size_value) {
             max_size = size_value
         }
 
-        if (min_size > size_value) {
+        if(!min_size){
+            min_size = size_value
+        } else if (min_size > size_value) {
             min_size = size_value
         }
 
@@ -70,7 +71,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
             }
         })
 
-        let color_value = eval(color_eq)
+        let color_value = eval(color_eq.replace(/[^a-zA-Z0-9. ]/g, ""))
 
         if (range_props.max) {
             max_color = range_props.max
@@ -132,6 +133,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
             return `${name}-${i}`
         })
         .attr("r", function (d) {
+            // console.log(radius(d.value))
             return radius(d.value)
             // return 4
         })

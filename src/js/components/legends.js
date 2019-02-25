@@ -6,6 +6,7 @@ const Legends = props => {
 
     let division_range = (max_radius + min_radius) / data.length
     let division_obj = []
+    let start_min = 0
 
     let difference = max_radius-min_radius
     for (let i = 0; i < data.length; i++) {

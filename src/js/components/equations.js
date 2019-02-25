@@ -27,7 +27,7 @@ class Equations extends Component {
     }
 
     render() {
-        let { options, calculations } = this.props
+        let { options, value } = this.props
 
         let filtered_headers = _.filter(options, list => {
             if(compulsory_element.indexOf(list) === -1){
@@ -47,7 +47,7 @@ class Equations extends Component {
                 <Mention
                     style={{ width: '100%' }}
                     defaultSuggestions={filtered_headers}
-                    // defaultValue={toContentState(calculations[name] || '')}
+                    defaultValue={toContentState(value || '')}
                     onChange={this.onChange}
                 />
                 <div className="filter-button-layout">

@@ -91,7 +91,7 @@ class Main extends Component {
                         onCancel={this.handleCancel}
                         footer=""
                     >
-                        <AddMaps key={uuid()} toggle={this.handleCancel} />
+                        <AddMaps key={uuid()} toggle={this.handleCancel} mapList={Object.keys(maps)} />
                     </Modal>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import uuid from 'uuid/v4'
 import _ from 'lodash'
 import { Mention, Tooltip, Select, Button } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,14 +14,17 @@ class SizeOption extends Component {
     constructor() {
         super()
         this.state = {
-            min: {
-                map: '',
-                column: ''
+            bubble_props: {
+                min: {
+                    map: '',
+                    column: ''
+                },
+                max: {
+                    map: '',
+                    column: ''
+                }
             },
-            max: {
-                map: '',
-                column: ''
-            }
+            is_loaded: false
         }
         this.parentChange = this.parentChange.bind(this)
         this.childChange = this.childChange.bind(this)
@@ -29,38 +33,81 @@ class SizeOption extends Component {
     }
 
     onSubmit() {
-        this.props.updateBubbleSize(this.props.name, this.state)
+        this.props.updateBubbleSize(this.props.name, this.state.bubble_props)
+        this.setState({
+            is_loaded: true
+        })
     }
 
-    onClear(){
+    onClear() {
         this.props.clearBubbleSize(this.props.name)
+        this.setState({
+            is_loaded: true
+        })
     }
 
     parentChange(key, value) {
+        let { bubble_props } = this.state
+        bubble_props[key] = {
+            ...this.state.bubble_props[key],
+            map: value
+        }
         this.setState({
-            [key]: {
-                ...this.state[key],
-                map: value
-            }
+            bubble_props
         })
     }
 
     childChange(key, value) {
+        let { bubble_props } = this.state
+        bubble_props[key] = {
+            ...this.state.bubble_props[key],
+            column: value
+        }
         this.setState({
-            [key]: {
-                ...this.state[key],
-                column: value
-            }
+            bubble_props
         })
     }
 
+    componentDidMount() {
+        let { bubble_size, name } = this.props
+
+        if (bubble_size[name]) {
+            this.setState({
+                bubble_props: bubble_size[name]
+            })
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        let { bubble_size, name } = nextProps
+        let { is_loaded } = nextState
+
+        if (is_loaded) {
+            this.setState({
+                bubble_props: bubble_size[name] || {
+                    min: {
+                        map: '',
+                        column: ''
+                    },
+                    max: {
+                        map: '',
+                        column: ''
+                    }
+                },
+                is_loaded: false
+            })
+        }
+
+        return true
+    }
+
     render() {
-        let { min, max } = this.state
-        let { headers, statistics, name } = this.props
+        let { bubble_props } = this.state
+        let { bubble_size, statistics, name } = this.props
 
         let option_values = Object.keys(statistics)
-        let min_child_options = min.map ? Object.keys(statistics[min.map]) : []
-        let max_child_options = max.map ? Object.keys(statistics[max.map]) : []
+        let min_child_options = bubble_props.min.map ? Object.keys(statistics[bubble_props.min.map]) : []
+        let max_child_options = bubble_props.max.map ? Object.keys(statistics[bubble_props.max.map]) : []
 
         return (<div className="options-layout">
             <h3>Size Options
@@ -71,21 +118,29 @@ class SizeOption extends Component {
 
             <div className="division-options justify-flex">
                 Min
-                <Select size="small" style={{ width: 100 }} onChange={value => this.parentChange('min', value)}>
-                    {option_values.map(list => <Option value={list}>{list}</Option>)}
+                <Select
+                    value={bubble_props.min.map || ''}
+                    size="small" style={{ width: 100 }} onChange={value => this.parentChange('min', value)}>
+                    {option_values.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
-                <Select size="small" style={{ width: 100 }} onChange={value => this.childChange('min', value)}>
-                    {min_child_options.map(list => <Option value={list}>{list}</Option>)}
+                <Select
+                    value={bubble_props.min.column || ''} 
+                    size="small" style={{ width: 100 }} onChange={value => this.childChange('min', value)}>
+                    {min_child_options.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
             </div>
 
             <div className="division-options justify-flex">
                 Max
-                <Select size="small" style={{ width: 100 }} onChange={value => this.parentChange('max', value)}>
-                    {option_values.map(list => <Option value={list}>{list}</Option>)}
+                <Select
+                    value={bubble_props.max.map || ''} 
+                    size="small" style={{ width: 100 }} onChange={value => this.parentChange('max', value)}>
+                    {option_values.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
-                <Select size="small" style={{ width: 100 }} onChange={value => this.childChange('max', value)}>
-                    {max_child_options.map(list => <Option value={list}>{list}</Option>)}
+                <Select
+                    value={bubble_props.max.column || ''} 
+                    size="small" style={{ width: 100 }} onChange={value => this.childChange('max', value)}>
+                    {max_child_options.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
             </div>
 
@@ -98,7 +153,8 @@ class SizeOption extends Component {
 const mapStateToProps = props => {
     let { filters } = props
     return {
-        statistics: filters.statistics
+        statistics: filters.statistics,
+        bubble_size: _.cloneDeep(filters.bubble_size)
     }
 }
 

@@ -18,7 +18,7 @@ class CentroidFilters extends Component {
         this.onSubmit = this.onSubmit.bind(this)
     }
 
-    onChange(value){
+    onChange(value) {
         this.setState({
             filters: value
         })
@@ -30,8 +30,18 @@ class CentroidFilters extends Component {
         this.props.setCentroidFilter(name, filters)
     }
 
+    componentDidMount() {
+        let { name, centroid_filters } = this.props
+        if (centroid_filters[name]) {
+            this.setState({
+                filters: centroid_filters[name]
+            })
+        }
+    }
+
     render() {
-        let { centroid_data, name } = this.props
+        let { filters } = this.state
+        let { centroid_data } = this.props
 
         return (<div className="options-layout">
             <h3>Centroid Filters
@@ -43,6 +53,7 @@ class CentroidFilters extends Component {
             <div className="filter-list">
                 <span>Centroid:</span>
                 <Select
+                    value={filters}
                     mode="multiple"
                     style={{ width: '200px', float: 'right' }}
                     placeholder="Please select"
@@ -65,7 +76,7 @@ class CentroidFilters extends Component {
 const mapStateToProps = props => {
     let { filters } = props
     return {
-
+        centroid_filters: filters.centroid_filters
     }
 }
 

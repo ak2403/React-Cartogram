@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import uuid from 'uuid/v4'
 import { Mention, Tooltip, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { setCalculation, switchSizeEquation } from '../../../redux/actions/filter-action'
@@ -57,8 +58,8 @@ class Calculation extends Component {
                 </Tooltip>
                 <span style={{ float: 'right', fontSize: '12px' }}>
                     Swap
-                        <Select size="small" style={{ width: 100 }} onChange={this.switchSize}>
-                        {maps_keys.map(list => <Option value={list}>{list}</Option>)}
+                        <Select value={size_switch[name] || ''} size="small" style={{ width: 100 }} onChange={this.switchSize}>
+                        {maps_keys.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                     </Select>
                 </span>
             </h3>

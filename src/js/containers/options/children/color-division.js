@@ -188,13 +188,13 @@ class DivisionColor extends Component {
                 </Tooltip>
                 <span style={{ float: 'right', fontSize: '12px' }}>
                     Swap
-                        <Select size="small" style={{ width: 100 }} onChange={this.switchFilter}>
-                        {maps_keys.map(list => <Option value={list}>{list}</Option>)}
+                        <Select value={color_equation_switch[name] || ''} size="small" style={{ width: 100 }} onChange={this.switchFilter}>
+                        {maps_keys.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                     </Select>
                 </span>
             </h3>
 
-            <Equations options={headers} onSubmit={this.onEquationSubmit} />
+            <Equations value={colors[name] || ''} options={headers} onSubmit={this.onEquationSubmit} />
 
             {colors[name] ?
                 <div className="color-panel">
