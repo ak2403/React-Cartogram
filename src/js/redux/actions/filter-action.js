@@ -88,6 +88,12 @@ export const setCentroidFilter = (key, value) => ({
     key: key
 })
 
+export const setColumnFilter = (key, value) => ({
+    type: filterTypes.SET_COLUMN_FILTER,
+    payload: value,
+    key: key
+})
+
 export const deleteLayer = key => ({
     type: filterTypes.DELETE_LAYER,
     payload: key

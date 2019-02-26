@@ -45,11 +45,12 @@ class Options extends Component {
 
     updateData(result) {
         let { centroid_data } = this.state
+        let {centroid_name}=this.props
         const data = result.data;
         
         data.map(list => {
-            if (centroid_data.indexOf(list.Centroid) === -1) {
-                centroid_data.push(list.Centroid)
+            if (centroid_data.indexOf(list[centroid_name]) === -1) {
+                centroid_data.push(list[centroid_name])
             }
         })
         
@@ -75,16 +76,13 @@ class Options extends Component {
                 <DivisionColor name={name} headers={headers} />
                 <SizeOption name={name} />
                 <General name={name} />
-                {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} /> : ''}
+                {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} headers={headers} /> : ''}
                 <Filters name={name} centroid_data={centroid_data} />
             </div> : <div className="float-icon">
                     <FontAwesomeIcon className="icons" icon="filter" onClick={this.toggleView} />
                 </div>}
         </div>)
     }
-}
-
-const mapStateToProps = props => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({

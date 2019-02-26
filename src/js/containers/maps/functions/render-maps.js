@@ -73,6 +73,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
 
         let color_value = eval(color_eq.replace(/[^a-zA-Z0-9. ]/g, ""))
 
+        // console.log(range_props)
+
         if (range_props.max) {
             max_color = range_props.max
             data_valid = size_value < range_props.max ? true : false

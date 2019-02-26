@@ -14,6 +14,7 @@ let initialState = {
     color_equation_switch: {},
     size_switch: {},
     centroid_filters: {},
+    column_filters: {},
     bubble_size: {}
 }
 
@@ -27,7 +28,8 @@ const FilterReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 maps: {
                     [action.payload.title]: {
-                        dataset: action.payload.dataset
+                        dataset: action.payload.dataset,
+                        centroid_name: action.payload.centroid_name
                     },
                     ...state.maps
                 },
@@ -82,6 +84,18 @@ const FilterReducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 centroid_filters: {
                     ...state.centroid_filters,
+                    [action.key]: action.payload
+                },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
+        case filterTypes.SET_COLUMN_FILTER:
+            return Object.assign({}, state, {
+                column_filters: {
+                    ...state.column_filters,
                     [action.key]: action.payload
                 },
                 reload: {

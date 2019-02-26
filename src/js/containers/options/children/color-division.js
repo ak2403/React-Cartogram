@@ -199,7 +199,7 @@ class DivisionColor extends Component {
             {colors[name] ?
                 <div className="color-panel">
                     <div className="color-row header">
-                        {columns.map(list => <div className="column-color-row">{list.title}</div>)}
+                        {columns.map(list => <div key={uuid()} className="column-color-row">{list.title}</div>)}
                     </div>
                     {division[name] ? division[name].map((list, index) => {
                         return <div key={uuid()} className="color-row">

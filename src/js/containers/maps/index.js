@@ -109,12 +109,13 @@ class RenderMaps extends Component {
 
     updateData(result) {
         let { count } = this.state
-        let { filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters, bubble_size, statistics } = this.props
+        let { centroid_name, column_filters, filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters, bubble_size, statistics } = this.props
         let filters = filter_options[name] || []
         let color_equation = division[name] || []
         let color_array = colors[name] || []
         let size_equation = calculations[name]
         let filter_centroid = centroid_filters[name] || []
+        let filter_column = column_filters[name] || {}
         let coordinates = {
             topLat: 0,
             topLong: 0,
@@ -126,14 +127,24 @@ class RenderMaps extends Component {
             min: '',
             max: ''
         }
-        
-        if(bubble_size[name]){
+
+        if (bubble_size[name]) {
             let range_props = bubble_size[name]
-            if(range_props.max && statistics[range_props.max.map] && statistics[range_props.max.map][range_props.max.column]){
-                range_object.max = statistics[range_props.max.map][range_props.max.column].max[range_props.max.column]
+
+            if (range_props.min.static) {
+                range_object.min = range_props.min.value
+            } else {
+                if (range_props.min && statistics[range_props.min.map] && statistics[range_props.min.map][range_props.min.column]) {
+                    range_object.min = statistics[range_props.min.map][range_props.min.column].min[range_props.min.column]
+                }
             }
-            if(range_props.min && statistics[range_props.min.map] && statistics[range_props.min.map][range_props.min.column]){
-                range_object.min = statistics[range_props.min.map][range_props.min.column].min[range_props.min.column]
+
+            if (range_props.max.static) {
+                range_object.max = range_props.max.value
+            } else {
+                if (range_props.max && statistics[range_props.max.map] && statistics[range_props.max.map][range_props.max.column]) {
+                    range_object.max = statistics[range_props.max.map][range_props.max.column].max[range_props.max.column]
+                }
             }
         }
 
@@ -161,21 +172,21 @@ class RenderMaps extends Component {
             latitude: '',
             longitude: ''
         }
-        
-        for(let i=0;i< headers.length;i++){
-            if(headers[i].toLowerCase().indexOf('lon') !== -1){
+
+        for (let i = 0; i < headers.length; i++) {
+            if (headers[i].toLowerCase().indexOf('lon') !== -1) {
                 getKeys.longitude = headers[i]
             }
-            if(headers[i].toLowerCase().indexOf('lat') !== -1){
+            if (headers[i].toLowerCase().indexOf('lat') !== -1) {
                 getKeys.latitude = headers[i]
             }
         }
 
         data.map(list => {
-            if (list.Centroid !== '(blank)') {
+            if (list[centroid_name] !== '(blank)') {
                 let is_valid_data = true,
                     is_gray_data = false;
-                
+
                 let lat_cor = Number(list[getKeys.latitude]),
                     long_cor = Number(list[getKeys.longitude]);
 
@@ -200,7 +211,11 @@ class RenderMaps extends Component {
                     }
                 })
 
-                if (filter_centroid.indexOf(list.Centroid) !== -1) {
+                if (filter_centroid.indexOf(list[centroid_name]) !== -1) {
+                    is_gray_data = true
+                }
+                
+                if(list[filter_column.column] === filter_column.value){
                     is_gray_data = true
                 }
 
@@ -231,12 +246,12 @@ class RenderMaps extends Component {
                     })
 
 
-                    if (!filtered_data[list.Centroid]) {
-                        filtered_data[list.Centroid] = list
-                        filtered_data[list.Centroid]['grayed'] = is_gray_data
-                        filtered_data[list.Centroid]['is_centroid_filter'] = filter_centroid.length !== 0 ? true : false
+                    if (!filtered_data[list[centroid_name]]) {
+                        filtered_data[list[centroid_name]] = list
+                        filtered_data[list[centroid_name]]['grayed'] = is_gray_data
+                        filtered_data[list[centroid_name]]['is_centroid_filter'] = (filter_centroid.length !== 0 || !_.isEmpty(filter_column)) ? true : false
                     } else {
-                        let get_centroid = filtered_data[list.Centroid]
+                        let get_centroid = filtered_data[list[centroid_name]]
 
                         for (let i = 0; i < non_compulsory_element.length; i++) {
                             let current_val = Number(get_centroid[non_compulsory_element[i]])
@@ -249,7 +264,7 @@ class RenderMaps extends Component {
         })
 
         let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array, range_object)
-        for(let key in statistics_data){
+        for (let key in statistics_data) {
             delete statistics_data[key].values
         }
         this.props.updateStatistics(name, statistics_data)
@@ -268,7 +283,7 @@ class RenderMaps extends Component {
         let { division, name } = this.props
 
         // console.log(division[name])
-        
+
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">
@@ -305,6 +320,7 @@ const mapStateToProps = props => {
     return {
         filter_options: _.cloneDeep(filters.filter_options),
         centroid_filters: _.cloneDeep(filters.centroid_filters),
+        column_filters: _.cloneDeep(filters.column_filters),
         color_picker: filters.color_picker,
         division: filters.division,
         scale: filters.scale,

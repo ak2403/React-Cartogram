@@ -74,8 +74,8 @@ class Main extends Component {
                         </div>
                         : Object.keys(maps).map(list => <div className="map-layer" key={uuid()}>
                             <h5>{list} <span className="sub-info">({maps[list].dataset})</span> <FontAwesomeIcon className="icons" icon="trash-alt" onClick={() => this.deleteLayer(list)} /></h5>
-                            <Maps name={list} dataset={maps[list].dataset} />
-                            <Options name={list} dataset={maps[list].dataset} />
+                            <Maps name={list} dataset={maps[list].dataset} centroid_name={maps[list].centroid_name} />
+                            <Options name={list} dataset={maps[list].dataset} centroid_name={maps[list].centroid_name} />
                         </div>)}
 
 

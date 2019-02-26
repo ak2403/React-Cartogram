@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { Form, Input, Select, Button } from 'antd';
 import { bindActionCreators } from 'redux'
 import uuid from 'uuid/v4'
+import Papa from 'papaparse'
 import { connect } from 'react-redux'
 import { datasets } from '../default'
+import Datasets from '../data'
 import { addMaps } from '../redux/actions/filter-action'
 
 const { Option } = Select;
@@ -14,10 +16,13 @@ class AddMaps extends Component {
         this.state = {
             new_map: {
                 title: '',
-                dataset: ''
+                dataset: '',
+                centroid_name: ''
             },
+            column_data: [],
             is_same_name: false
         }
+        this.dataChange = this.dataChange.bind(this)
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
     }
@@ -44,6 +49,23 @@ class AddMaps extends Component {
         })
     }
 
+    dataChange(value) {
+        Papa.parse(Datasets[value], {
+            header: true,
+            download: true,
+            skipEmptyLines: true,
+            complete: (result) => {
+                this.setState({
+                    new_map: {
+                        ...this.state.new_map,
+                        dataset: value
+                    },
+                    column_data: result.meta.fields
+                })
+            }
+        });
+    }
+
     render() {
         const formItemLayout = {
             labelCol: {
@@ -55,7 +77,7 @@ class AddMaps extends Component {
                 sm: { span: 16 },
             },
         };
-        let { is_same_name } = this.state
+        let { is_same_name, column_data } = this.state
 
         return (
             <Form>
@@ -71,11 +93,20 @@ class AddMaps extends Component {
                     label="Dataset"
                 >
                     <Select
-                        onChange={value => this.onChange('dataset', value)}>
+                        onChange={this.dataChange}>
                         {datasets.map(list => <Option key={uuid()} value={list.path}>{list.text}</Option>)}
                     </Select>
                 </Form.Item>
-                {is_same_name ? <p style={{color: 'red'}}>Please change the name of the map since there is a map with the same name.</p> : ''}
+
+                <Form.Item
+                    {...formItemLayout}
+                    label="Name">
+                    <Select
+                        onChange={value => this.onChange('centroid_name', value)}>
+                        {column_data.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
+                    </Select>
+                </Form.Item>
+                {is_same_name ? <p style={{ color: 'red' }}>Please change the name of the map since there is a map with the same name.</p> : ''}
 
                 <Form.Item {...formItemLayout}>
                     <Button onClick={this.onSubmit}>Add</Button>
