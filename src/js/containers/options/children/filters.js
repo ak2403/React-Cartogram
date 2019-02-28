@@ -9,7 +9,7 @@ import { Select, Switch, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'uuid/v4'
 import { submitFilter, switchFilters } from '../../../redux/actions/filter-action'
-import { month_options, filter_options } from '../../../default'
+import { month_options, filter_options } from '../../../../default'
 
 const Option = Select.Option;
 

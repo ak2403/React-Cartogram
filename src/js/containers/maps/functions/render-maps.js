@@ -1,7 +1,7 @@
 import $ from 'jquery'
-import { calculateDistance } from '../../../default'
+import { calculateDistance } from '../../../../default'
 
-const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation, range_props) => {
+const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale_val, calculation, color_equation, range_props, centroid_name, common_color_props, color_object) => {
     var element = d3.select(`.${name}`).node();
     var width = element.getBoundingClientRect().width;
     var height = 600;
@@ -20,8 +20,6 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
 
     let tooltip = d3.select(".custom-tooltip");
 
-    // let b0 =  [142.219166, -34.25075267]
-    // let b1 = [147.0673065, -38.57692015]
     //create projection
     let b0 = [coordinates['topLong'], coordinates['topLat']]
     let b1 = [coordinates['bottomLong'], coordinates['bottomLat']]
@@ -29,15 +27,14 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     //create projection
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
-        .scale(scale_val || calculateDistance(b0, b1))
+        .scale(calculateDistance(b0, b1)+(scale_val||0))
         .translate([width / 2, height / 2])
         .precision(0.1);
 
     let nodes = []
 
     for (var i in data) {
-        let d = data[i],
-            data_valid = true
+        let d = data[i];
 
         var point = projection([d[keys.longitude], d[keys.latitude]])
 
@@ -48,16 +45,16 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
                 new_formula = new_formula.replace(new RegExp(`@${key}`, 'g'), d[key])
             }
         })
+        // .replace(/[^a-zA-Z0-9. ]/g, "")
+        let size_value = eval(new_formula)
 
-        let size_value = eval(new_formula.replace(/[^a-zA-Z0-9. ]/g, ""))
-
-        if(!max_size){
+        if (!max_size) {
             max_size = size_value
         } else if (max_size < size_value) {
             max_size = size_value
         }
 
-        if(!min_size){
+        if (!min_size) {
             min_size = size_value
         } else if (min_size > size_value) {
             min_size = size_value
@@ -75,35 +72,35 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
 
         // console.log(range_props)
 
-        if (range_props.max) {
-            max_color = range_props.max
-            data_valid = size_value < range_props.max ? true : false
-        } else {
-            if (max_color < color_value) {
-                max_color = color_value
-            }
+        // if (range_props.max) {
+        //     max_color = range_props.max
+        //     data_valid = size_value < range_props.max ? true : false
+        // } else {
+        if (max_color < size_value) {
+            max_color = size_value
         }
+        // }
 
-        if (range_props.min) {
-            min_color = range_props.min
-            if(data_valid){
-            data_valid = size_value > range_props.min ? true : false
-            }
-        } else {
-            if (min_color > color_value) {
-                min_color = color_value
-            }
+        // if (range_props.min) {
+        //     min_color = range_props.min
+        //     if(data_valid){
+        //     data_valid = size_value > range_props.min ? true : false
+        //     }
+        // } else {
+        if (min_color > size_value) {
+            min_color = size_value
         }
+        // }
 
-        if (!Number.isNaN(point[0]) && !Number.isNaN(point[1]) && data_valid) {
+        if (!Number.isNaN(point[0]) && !Number.isNaN(point[1])) {
             nodes.push({
-                name: d.Centroid,
+                name: d[centroid_name],
                 apply_gray: d.is_centroid_filter,
                 grayed: d.grayed,
                 x: point[0], y: point[1],
                 x0: point[0], y0: point[1],
                 value: size_value,
-                color: color_value,
+                color: size_value,
                 default_color: defaultcolor
             });
         }
@@ -114,14 +111,13 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         .projection(projection);
 
     var radius = d3.scale.sqrt()
-        .domain([min_size, max_size])
+        .domain([range_props.min || min_size, range_props.max || max_size])
         .range([0, 30]);
 
     var force = d3.layout.force()
         .charge(0)
         .gravity(0)
         .size([width, height]);
-
 
     force
         .nodes(nodes)
@@ -134,6 +130,9 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         .attr('class', function (d, i) {
             return `${name}-${i}`
         })
+        .attr('size', function (d) {
+            return d.value
+        })
         .attr("r", function (d) {
             // console.log(radius(d.value))
             return radius(d.value)
@@ -142,13 +141,15 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         .style("fill", function (d) {
             let colors = d.default_color
 
-            division.map(list => {
-                let start_val = max_color * (Number(list['from']) / 100)
-                let end_val = max_color * (Number(list['to']) / 100)
-                if (d.color > start_val && d.color <= end_val) {
-                    colors = list.color
-                }
-            })
+            if (common_color_props.division) {
+                common_color_props.division.map(list => {
+                    let start_val = color_object.max * (Number(list['from']) / 100)
+                    let end_val = color_object.max * (Number(list['to']) / 100)
+                    if (d.color > start_val && d.color <= end_val) {
+                        colors = list.color
+                    }
+                })
+            }
             return colors
         })
         .style("opacity", function (d) {
@@ -162,8 +163,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         })
         .on("mouseover", function (d) {
             tooltip.select("#header").text(`Centroid: ${d.name}`)
-            tooltip.select("#description").text(`Equation Size: ${d.value}`)
-            d.color ? tooltip.select("#sub-description").text(`Equation Color: ${d.color}`) : ''
+            tooltip.select("#description").text(`Size: ${d.value}`)
+            // d.color ? tooltip.select("#sub-description").text(`Equation Color: ${d.color}`) : ''
             return tooltip.style("visibility", "visible");
         })
         .on("mousemove", function () {
@@ -186,7 +187,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     function tick(e) {
         node
             .each(gravity(e.alpha * .1))
-            .each(collide(.5))
+            .each(collide(.10))
             .attr("cx", function (d) {
                 return d.x;
             })
@@ -229,8 +230,8 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     }
 
     return {
-        min_color,
-        max_color
+        min_color: color_object.min,
+        max_color: color_object.max
     }
 
 }

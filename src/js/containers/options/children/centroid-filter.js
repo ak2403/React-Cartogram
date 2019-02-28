@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Select, Input, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'uuid/v4'
-import { setCentroidFilter, setColumnFilter } from '../../../redux/actions/filter-action'
+import { setCentroidFilter, setColumnFilter, clearColumnFilter, clearCentroidFilter } from '../../../redux/actions/filter-action'
 
 const Option = Select.Option;
 
@@ -22,6 +22,25 @@ class CentroidFilters extends Component {
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
         this.columnSubmit = this.columnSubmit.bind(this)
+        this.columnClear = this.columnClear.bind(this)
+        this.centroidClear = this.centroidClear.bind(this)
+    }
+
+    centroidClear(){
+        this.props.clearCentroidFilter(this.props.name)
+        this.setState({
+            filters: []
+        })
+    }
+
+    columnClear() {
+        this.props.clearColumnFilter(this.props.name)
+        this.setState({
+            column_filter: {
+                column: '',
+                value: ''
+            }
+        })
     }
 
     columnChange(name, value) {
@@ -44,23 +63,29 @@ class CentroidFilters extends Component {
         this.props.setCentroidFilter(name, filters)
     }
 
-    columnSubmit(){
+    columnSubmit() {
         let { column_filter } = this.state
         let { name } = this.props
         this.props.setColumnFilter(name, column_filter)
     }
 
     componentDidMount() {
-        let { name, centroid_filters } = this.props
+        let { name, centroid_filters, column_filters } = this.props
         if (centroid_filters[name]) {
             this.setState({
                 filters: centroid_filters[name]
             })
         }
+
+        if(column_filters[name]){
+            this.setState({
+                column_filter: column_filters[name]
+            })
+        }
     }
 
     render() {
-        let { filters } = this.state
+        let { filters, column_filter } = this.state
         let { centroid_data, headers } = this.props
 
         return (<div className="options-layout">
@@ -87,23 +112,32 @@ class CentroidFilters extends Component {
                     <FontAwesomeIcon className="icon-filter" icon="filter" />
                     Filter
                 </div>
+                <div className="filter-button" onClick={this.centroidClear}>
+                    <FontAwesomeIcon className="icon-filter" icon="filter" />
+                    Clear
+                </div>
             </div>
 
-            <div className="filter-list">
+            <div className="filter-list justify-flex">
                 <span>Column</span>
                 <Select
+                    value={column_filter.column || ''}
                     onChange={value => this.columnChange('column', value)}
-                    style={{ width: '100px', float: 'right' }}
+                    style={{ width: '110px' }}
                     placeholder="Please select"
                 >
                     {headers.map(list => <Option key={uuid()} value={list}>{list}</Option>)}
                 </Select>
-                <Input onChange={e => this.columnChange('value', e.target.value)} />
+                <Input style={{ width: '110px' }} value={column_filter.value || ''} onChange={e => this.columnChange('value', e.target.value)} />
             </div>
             <div className="filter-button-layout">
                 <div className="filter-button" onClick={this.columnSubmit}>
                     <FontAwesomeIcon className="icon-filter" icon="filter" />
                     Filter
+                </div>
+                <div className="filter-button" onClick={this.columnClear}>
+                    <FontAwesomeIcon className="icon-filter" icon="filter" />
+                    Clear
                 </div>
             </div>
 
@@ -114,13 +148,16 @@ class CentroidFilters extends Component {
 const mapStateToProps = props => {
     let { filters } = props
     return {
-        centroid_filters: filters.centroid_filters
+        centroid_filters: filters.centroid_filters,
+        column_filters: filters.column_filters
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setCentroidFilter,
-    setColumnFilter
+    setColumnFilter,
+    clearColumnFilter,
+    clearCentroidFilter
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CentroidFilters)

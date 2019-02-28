@@ -15,7 +15,9 @@ let initialState = {
     size_switch: {},
     centroid_filters: {},
     column_filters: {},
-    bubble_size: {}
+    bubble_size: {},
+    common_size_props: {},
+    common_color_props: {}
 }
 
 const FilterReducer = (state = initialState, action) => {
@@ -34,6 +36,46 @@ const FilterReducer = (state = initialState, action) => {
                     ...state.maps
                 },
                 reload: reload_obj
+            })
+
+        case filterTypes.SET_COMMON_SIZE:
+            let common_maps_key = Object.keys(state.maps)
+            let common_reload_obj = {}
+            common_maps_key.map(list => common_reload_obj[list] = true)
+
+            return Object.assign({}, state, {
+                common_size_props: action.payload,
+                reload: common_reload_obj
+            })
+
+        case filterTypes.CLEAR_COMMON_SIZE:
+            let clear_maps_key = Object.keys(state.maps)
+            let clear_reload_obj = {}
+            clear_maps_key.map(list => clear_reload_obj[list] = true)
+
+            return Object.assign({}, state, {
+                common_size_props: {},
+                reload: clear_reload_obj
+            })
+
+        case filterTypes.SET_COMMON_COLOR:
+            let color_maps_key = Object.keys(state.maps)
+            let color_reload_obj = {}
+            color_maps_key.map(list => color_reload_obj[list] = true)
+
+            return Object.assign({}, state, {
+                common_color_props: action.payload,
+                reload: color_reload_obj
+            })
+
+        case filterTypes.CLEAR_COMMON_COLOR:
+            let clearcolor_maps_key = Object.keys(state.maps)
+            let clearcolor_reload_obj = {}
+            clearcolor_maps_key.map(list => clearcolor_reload_obj[list] = true)
+
+            return Object.assign({}, state, {
+                common_color_props: {},
+                reload: clearcolor_reload_obj
             })
 
         case filterTypes.UPDATE_BUBBLE_SIZE:
@@ -98,6 +140,28 @@ const FilterReducer = (state = initialState, action) => {
                     ...state.column_filters,
                     [action.key]: action.payload
                 },
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
+        case filterTypes.CLEAR_COLUMN_FILTER:
+            let duplicate_column_filters = Object.assign({}, state.column_filters)
+            delete duplicate_column_filters[action.key]
+            return Object.assign({}, state, {
+                column_filters: duplicate_column_filters,
+                reload: {
+                    ...state.reload,
+                    [action.key]: true
+                }
+            })
+
+        case filterTypes.CLEAR_CENTROID_FILTER:
+            let duplicate_centroid_filters = Object.assign({}, state.centroid_filters)
+            delete duplicate_centroid_filters[action.key]
+            return Object.assign({}, state, {
+                centroid_filters: duplicate_centroid_filters,
                 reload: {
                     ...state.reload,
                     [action.key]: true

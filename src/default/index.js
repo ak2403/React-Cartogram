@@ -27,6 +27,12 @@ export const datasets = [{
 }, {
     text: 'BMV1',
     path: 'BMV1'
+}, {
+    text: 'NewBM',
+    path: 'NewBM'
+},{
+    text: 'Example_data',
+    path: 'Example_data'
 }]
 
 export const filter_options = [{

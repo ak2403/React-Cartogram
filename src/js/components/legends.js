@@ -3,6 +3,7 @@ import uuid from 'uuid/v4'
 
 const Legends = props => {
     let { data, max_radius, min_radius } = props
+    console.log(data)
 
     let division_range = (max_radius + min_radius) / data.length
     let division_obj = []

@@ -3,13 +3,14 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Papa from 'papaparse'
+import html2canvas from 'html2canvas'
 import Filters from './children/filters'
 import General from './children/general'
 import CentroidFilters from './children/centroid-filter'
 import Calculation from './children/Calculation'
 import SizeOption from './children/size-option'
 import DivisionColor from './children/color-division'
-import Datasets from '../../data'
+import Datasets from '../../../data'
 
 class Options extends Component {
     constructor() {
@@ -21,6 +22,15 @@ class Options extends Component {
         }
         this.toggleView = this.toggleView.bind(this)
         this.updateData = this.updateData.bind(this)
+        this.capture = this.capture.bind(this)
+    }
+
+    capture(){
+        html2canvas(document.querySelector("."+this.props.name)).then(canvas => {
+            // console.log(canvas)
+            // document.body.appendChild(canvas)
+            return Canvas2Image.saveAsPNG(canvas);
+        });
     }
 
     componentDidMount() {
@@ -73,13 +83,14 @@ class Options extends Component {
                     <FontAwesomeIcon className="icons" icon="times-circle" onClick={this.toggleView} />
                 </div>
                 <Calculation name={name} headers={headers} />
-                <DivisionColor name={name} headers={headers} />
-                <SizeOption name={name} />
+                {/* <DivisionColor name={name} headers={headers} /> */}
+                {/* <SizeOption name={name} /> */}
                 <General name={name} />
                 {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} headers={headers} /> : ''}
                 <Filters name={name} centroid_data={centroid_data} />
             </div> : <div className="float-icon">
                     <FontAwesomeIcon className="icons" icon="filter" onClick={this.toggleView} />
+                    <FontAwesomeIcon className="icons" icon="image" onClick={this.capture} />
                 </div>}
         </div>)
     }

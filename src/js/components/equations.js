@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import { Mention, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { compulsory_element } from '../default'
+import { compulsory_element } from '../../default'
 
 const { toString, toContentState } = Mention;
 

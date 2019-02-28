@@ -32,6 +32,17 @@ body{
         }
     }
 }
+.common-size-container{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.common-size-options{
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
 .map-layer{
     width: 49%;
     min-height: 700px;
@@ -82,11 +93,44 @@ body{
         }
     }
 }
+.common-option-layout{
+    width: 100%;
+    display: flex;
+    .common-color-panel{
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        .header{
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .color-row{
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            .column-color-row{
+                flex: 2;
+                padding: 0 10px;
+                margin: 10px 0;
+                &:last-child{
+                    flex: 8;
+                }
+                input{
+                    width: 60px;
+                    border-radius: 5px;
+                    border: 1px solid #e0e0e0;
+                    padding: 2px 5px;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
 .options-layer{
     position: absolute;
     top: 0;
     right: 0;
-    height: 700px;
+    // height: 700px;
     max-height: 700px;
     width: 350px;
     z-index: 2;
@@ -97,6 +141,9 @@ body{
         padding-top: 10px;
         padding-right: 10px;
         font-size: 14px;
+        svg{
+            margin: 0 5px;
+        }
     }
     .options-container{
         background: #f3f3f3;
@@ -158,28 +205,28 @@ body{
             }
         }
     }
-    .filter-button-layout{
-        width: 100%;
-        display: flex;
-        margin-top: 5px;
-        justify-content: space-around;
-        .right{
-            margin-left: auto !important;
+}
+.filter-button-layout{
+    width: 100%;
+    display: flex;
+    margin-top: 5px;
+    justify-content: space-around;
+    .right{
+        margin-left: auto !important;
+    }
+    .filter-button{
+        width: 110px;
+        font-size: 12px;
+        background: #e0e0e0;
+        border-radius: 5px;
+        margin: 0 5px;
+        padding: 5px;
+        cursor: pointer;
+        .icon-filter{
+            margin-right: 10px;
         }
-        .filter-button{
-            width: 110px;
-            font-size: 12px;
-            background: #e0e0e0;
-            border-radius: 5px;
-            margin: 0 5px;
-            padding: 5px;
-            cursor: pointer;
-            .icon-filter{
-                margin-right: 10px;
-            }
-            &:hover{
-                background: #cacaca;
-            }
+        &:hover{
+            background: #cacaca;
         }
     }
 }

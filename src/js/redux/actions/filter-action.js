@@ -94,6 +94,34 @@ export const setColumnFilter = (key, value) => ({
     key: key
 })
 
+export const setCommonSize = value => ({
+    type: filterTypes.SET_COMMON_SIZE,
+    payload: value
+})
+
+export const setCommonColor = value => ({
+    type: filterTypes.SET_COMMON_COLOR,
+    payload: value
+})
+
+export const clearCommonColor = value => ({
+    type: filterTypes.CLEAR_COMMON_COLOR
+})
+
+export const clearCommonSize = () => ({
+    type: filterTypes.CLEAR_COMMON_SIZE
+})
+
+export const clearColumnFilter = key => ({
+    type: filterTypes.CLEAR_COLUMN_FILTER,
+    key: key
+})
+
+export const clearCentroidFilter = key => ({
+    type: filterTypes.CLEAR_CENTROID_FILTER,
+    key: key
+})
+
 export const deleteLayer = key => ({
     type: filterTypes.DELETE_LAYER,
     payload: key

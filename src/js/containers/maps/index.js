@@ -9,9 +9,9 @@ import Papa from 'papaparse'
 import Legends from '../../components/legends'
 import CollapseComponent from '../../components/collapse'
 import CreateMap from './functions/render-maps'
-import Datasets from '../../data'
+import Datasets from '../../../data'
 import { modifyScale, updateStatistics, resetSettings } from '../../redux/actions/filter-action'
-import { statistics_array, convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../default'
+import { statistics_array, convertMonthtoVal, compulsory_element, non_compulsory_element } from '../../../default'
 
 const ButtonGroup = Button.Group;
 
@@ -55,13 +55,13 @@ class RenderMaps extends Component {
 
     changeScale(type) {
         let { name, scale } = this.props
-        let getScale = scale[name] || 10000
+        let getScale = scale[name] || 0
 
         type === "in" ? getScale += 1000 : getScale -= 1000
 
-        if (getScale > 0) {
+        // if (getScale > 0) {
             this.props.modifyScale(this.props.name, getScale)
-        }
+        // }
     }
 
     // componentDidMount(){
@@ -109,7 +109,7 @@ class RenderMaps extends Component {
 
     updateData(result) {
         let { count } = this.state
-        let { centroid_name, column_filters, filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters, bubble_size, statistics } = this.props
+        let { centroid_name, common_color_props, common_size_props, column_filters, filter_options, division, name, calculations, color_picker, scale, colors, color_equation_switch, filter_switch, size_switch, centroid_filters, bubble_size, statistics } = this.props
         let filters = filter_options[name] || []
         let color_equation = division[name] || []
         let color_array = colors[name] || []
@@ -127,25 +127,27 @@ class RenderMaps extends Component {
             min: '',
             max: ''
         }
+        
+        let color_object = {
+            min: '',
+            max: ''
+        }
 
-        if (bubble_size[name]) {
-            let range_props = bubble_size[name]
 
-            if (range_props.min.static) {
-                range_object.min = range_props.min.value
-            } else {
-                if (range_props.min && statistics[range_props.min.map] && statistics[range_props.min.map][range_props.min.column]) {
-                    range_object.min = statistics[range_props.min.map][range_props.min.column].min[range_props.min.column]
-                }
-            }
+        if (common_size_props.min && statistics[common_size_props.min.map] && statistics[common_size_props.min.map][common_size_props.min.column]) {
+            range_object.min = statistics[common_size_props.min.map][common_size_props.min.column].min[common_size_props.min.column]
+        }
 
-            if (range_props.max.static) {
-                range_object.max = range_props.max.value
-            } else {
-                if (range_props.max && statistics[range_props.max.map] && statistics[range_props.max.map][range_props.max.column]) {
-                    range_object.max = statistics[range_props.max.map][range_props.max.column].max[range_props.max.column]
-                }
-            }
+        if (common_size_props.max && statistics[common_size_props.max.map] && statistics[common_size_props.max.map][common_size_props.max.column]) {
+            range_object.max = statistics[common_size_props.max.map][common_size_props.max.column].max[common_size_props.max.column]
+        }
+
+        if (common_color_props.min && statistics[common_color_props.min.map] && statistics[common_color_props.min.map][common_color_props.min.column]) {
+            color_object.min = statistics[common_color_props.min.map][common_color_props.min.column].min[common_color_props.min.column]
+        }
+
+        if (common_color_props.max && statistics[common_color_props.max.map] && statistics[common_color_props.max.map][common_color_props.max.column]) {
+            color_object.max = statistics[common_color_props.max.map][common_color_props.max.column].max[common_color_props.max.column]
         }
 
         if (size_switch[name]) {
@@ -214,8 +216,8 @@ class RenderMaps extends Component {
                 if (filter_centroid.indexOf(list[centroid_name]) !== -1) {
                     is_gray_data = true
                 }
-                
-                if(list[filter_column.column] === filter_column.value){
+
+                if (list[filter_column.column] && filter_column.value && list[filter_column.column] === filter_column.value) {
                     is_gray_data = true
                 }
 
@@ -263,7 +265,7 @@ class RenderMaps extends Component {
             }
         })
 
-        let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array, range_object)
+        let return_value = CreateMap(getKeys, coordinates, name, filtered_data, color_equation, color_picker[name] || '#2ecc71', scale[name], size_equation, color_array, range_object, centroid_name, common_color_props, color_object)
         for (let key in statistics_data) {
             delete statistics_data[key].values
         }
@@ -272,34 +274,32 @@ class RenderMaps extends Component {
             statistics: statistics_data,
             headers: result.meta.fields,
             count: Object.keys(filtered_data).length,
-            min_radius: return_value.min_color,
-            max_radius: return_value.max_color,
+            min_radius: Number(return_value.min_color) || 0,
+            max_radius: Number(return_value.max_color) || 0,
             reload: true
         })
     }
 
     render() {
         let { count, max_radius, min_radius, statistics } = this.state
-        let { division, name } = this.props
-
-        // console.log(division[name])
+        let { division, name, common_color_props } = this.props
 
         return (
             <div className="maps-display">
                 {count !== 0 ? <div className="maps-details">
                     <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     Count: {count}
-                    <ButtonGroup size='small'>
+                    {/* <ButtonGroup size='small'>
                         <Button onClick={() => this.changeScale('in')}>+</Button>
                         <Button onClick={() => this.changeScale('out')}>-</Button>
-                    </ButtonGroup>
+                    </ButtonGroup> */}
                 </div> : ''}
                 <div className={`maps-view ${this.props.name}`}>
                     <div className="smoke-screen">
                         <h3>Make a filter </h3>
                     </div>
                 </div>
-                <Legends data={division[name] || []} max_radius={max_radius} min_radius={min_radius} />
+                <Legends data={common_color_props.division || []} max_radius={max_radius} min_radius={min_radius} />
                 <Drawer
                     title="Statistics"
                     placement={this.state.placement}
@@ -331,7 +331,9 @@ const mapStateToProps = props => {
         size_switch: filters.size_switch,
         reload: filters.reload,
         bubble_size: _.cloneDeep(filters.bubble_size),
-        statistics: filters.statistics
+        statistics: filters.statistics,
+        common_size_props: filters.common_size_props,
+        common_color_props: filters.common_color_props
     }
 }
 

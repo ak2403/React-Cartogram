@@ -1,21 +1,26 @@
 import React, { Component } from "react";
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button, Modal } from 'antd';
+import { Button, Modal, Collapse, Checkbox } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import _ from 'lodash';
 import uuid from 'uuid/v4'
+import CommonSize from './components/common-size'
+import CommonColor from './components/common-color'
 import Maps from './containers/maps'
 import Options from "./containers/options/index.js";
 import AddMaps from './components/addmaps-modal';
-import { switchScreen, deleteLayer } from './redux/actions/filter-action'
+import { switchScreen, deleteLayer, setCommonSize } from './redux/actions/filter-action'
+
+const Panel = Collapse.Panel;
 
 class Main extends Component {
     constructor() {
         super()
         this.state = {
             scale: 0,
-            visible: false
+            visible: false,
+            is_block: false
         }
         this.onChange = this.onChange.bind(this)
         this.showModal = this.showModal.bind(this)
@@ -31,23 +36,35 @@ class Main extends Component {
     showModal() {
         this.setState({
             visible: true,
+            is_block: false
         });
     }
 
     handleOk(e) {
         this.setState({
             visible: false,
+            is_block: false
         });
     }
 
     handleCancel(e) {
         this.setState({
             visible: false,
+            is_block: false
         });
     }
 
     onChange(e) {
         this.props.switchScreen(e.target.value === 'compare' ? true : false)
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        let { is_block } = nextState
+
+        if (is_block) {
+            return false
+        }
+        return true
     }
 
     render() {
@@ -60,6 +77,17 @@ class Main extends Component {
                     <h3>Ambulance Victoria</h3>
                     <Button onClick={this.showModal}>Add a map</Button>
                 </div>
+                <div className="common-option-layout">
+                    <Collapse bordered={false}>
+                        <Panel header="Size" key="1">
+                            <CommonSize />
+                        </Panel>
+                        <Panel header="Color" key="2">
+                            <CommonColor />
+                        </Panel>
+                    </Collapse>
+                </div>
+
                 <div className="maps-layout">
                     {Object.keys(maps).length === 0 ?
                         <div className="smoke-screen">
@@ -109,7 +137,8 @@ const mapStateToProps = props => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     switchScreen,
-    deleteLayer
+    deleteLayer,
+    setCommonSize
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)

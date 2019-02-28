@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux'
 import uuid from 'uuid/v4'
 import Papa from 'papaparse'
 import { connect } from 'react-redux'
-import { datasets } from '../default'
-import Datasets from '../data'
+import { datasets } from '../../default'
+import Datasets from '../../data'
 import { addMaps } from '../redux/actions/filter-action'
 
 const { Option } = Select;
@@ -100,7 +100,7 @@ class AddMaps extends Component {
 
                 <Form.Item
                     {...formItemLayout}
-                    label="Name">
+                    label="Centroid Column">
                     <Select
                         onChange={value => this.onChange('centroid_name', value)}>
                         {column_data.map(list => <Option key={uuid()} value={list}>{list}</Option>)}

@@ -6,7 +6,7 @@ import uuid from 'uuid/v4'
 import { Mention, Tooltip, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { setCalculation, switchSizeEquation } from '../../../redux/actions/filter-action'
-import { compulsory_element } from '../../../default'
+import { compulsory_element } from '../../../../default'
 
 const { toString, toContentState } = Mention;
 const Option = Select.Option;
