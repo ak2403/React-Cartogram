@@ -133,7 +133,7 @@ class RenderMaps extends Component {
             max: ''
         }
 
-
+// debugger
         if (common_size_props.min && statistics[common_size_props.min.map] && statistics[common_size_props.min.map][common_size_props.min.column]) {
             range_object.min = statistics[common_size_props.min.map][common_size_props.min.column].min[common_size_props.min.column]
         }
@@ -289,10 +289,10 @@ class RenderMaps extends Component {
                 {count !== 0 ? <div className="maps-details">
                     <FontAwesomeIcon className="icons" icon="info-circle" onClick={this.showDrawer} />
                     Count: {count}
-                    {/* <ButtonGroup size='small'>
+                    <ButtonGroup size='small'>
                         <Button onClick={() => this.changeScale('in')}>+</Button>
                         <Button onClick={() => this.changeScale('out')}>-</Button>
-                    </ButtonGroup> */}
+                    </ButtonGroup>
                 </div> : ''}
                 <div className={`maps-view ${this.props.name}`}>
                     <div className="smoke-screen">

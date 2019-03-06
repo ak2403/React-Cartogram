@@ -83,7 +83,7 @@ class Options extends Component {
                     <FontAwesomeIcon className="icons" icon="times-circle" onClick={this.toggleView} />
                 </div>
                 <Calculation name={name} headers={headers} />
-                {/* <DivisionColor name={name} headers={headers} /> */}
+                <DivisionColor name={name} headers={headers} />
                 {/* <SizeOption name={name} /> */}
                 <General name={name} />
                 {centroid_data.length !== 0 ? <CentroidFilters name={name} centroid_data={centroid_data} headers={headers} /> : ''}

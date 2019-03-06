@@ -67,7 +67,8 @@ class DivisionColor extends Component {
             color: ''
         })
         this.setState({
-            division_data
+            division_data,
+            dont_load: false
         })
     }
 
@@ -96,7 +97,7 @@ class DivisionColor extends Component {
         division_data[index][key] = value
         this.setState({
             division_data,
-            dont_load: true
+            dont_load: key === 'color' ? false : true
         })
     }
 

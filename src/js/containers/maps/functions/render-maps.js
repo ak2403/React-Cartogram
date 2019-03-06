@@ -27,7 +27,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
     //create projection
     var projection = d3.geo.mercator()
         .center([(b1[0] + b0[0]) / 2, (b1[1] + b0[1]) / 2])
-        .scale(calculateDistance(b0, b1)+(scale_val||0))
+        .scale(calculateDistance(b0, b1) + (scale_val || 0))
         .translate([width / 2, height / 2])
         .precision(0.1);
 
@@ -76,19 +76,31 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
         //     max_color = range_props.max
         //     data_valid = size_value < range_props.max ? true : false
         // } else {
-        if (max_color < size_value) {
-            max_color = size_value
+        if (common_color_props.division) {
+            if (max_color < size_value) {
+                max_color = size_value
+            }
+        } else {
+            if (max_color < color_value) {
+                max_color = color_value
+            }
         }
         // }
 
         // if (range_props.min) {
         //     min_color = range_props.min
-        //     if(data_valid){
-        //     data_valid = size_value > range_props.min ? true : false
+        //     if (data_valid) {
+        //         data_valid = size_value > range_props.min ? true : false
         //     }
         // } else {
-        if (min_color > size_value) {
-            min_color = size_value
+        if (common_color_props.division) {
+            if (min_color > size_value) {
+                min_color = size_value
+            }
+        } else {
+            if (min_color > color_value) {
+                min_color = color_value
+            }
         }
         // }
 
@@ -100,7 +112,7 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
                 x: point[0], y: point[1],
                 x0: point[0], y0: point[1],
                 value: size_value,
-                color: size_value,
+                color: color_value,
                 default_color: defaultcolor
             });
         }
@@ -145,6 +157,14 @@ const renderMaps = (keys, coordinates, name, data, division, defaultcolor, scale
                 common_color_props.division.map(list => {
                     let start_val = color_object.max * (Number(list['from']) / 100)
                     let end_val = color_object.max * (Number(list['to']) / 100)
+                    if (d.color > start_val && d.color <= end_val) {
+                        colors = list.color
+                    }
+                })
+            } else {
+                division.map(list => {
+                    let start_val = max_color * (Number(list['from']) / 100)
+                    let end_val = max_color * (Number(list['to']) / 100)
                     if (d.color > start_val && d.color <= end_val) {
                         colors = list.color
                     }

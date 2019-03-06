@@ -95,9 +95,9 @@ export const month_options = [{
 
 export const compulsory_element = ['Year', 'Month', 'Day_of_Week', 'Hour_of_Day', 'Centroid', 'Centroid Longitude', 'Centroid Latitude']
 
-export const non_compulsory_element = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases']
+export const non_compulsory_element = ['Did not arrive within 15', 'Arrived at within 15', 'Total Cases', 'Count', 'Arrived_at_C1', 'Did not arrive within 15', 'Arrived at within 15', 'Total Cases', 'Not_Arrived', 'Arrived_Under_15', 'Not Arrived', 'Over_15', 'Under_15', 'Grand Total', 'Percentage']
 
-export const statistics_array = ['Count', 'Arrived_at_C1', 'Did not arrive within 15', 'Arrived at within 15', 'Total Cases', 'Not_Arrived', 'Arrived_Under_15', 'Not Arrived', 'Over_15', 'Under_15', 'Grand Total']
+export const statistics_array = ['Count', 'Arrived_at_C1', 'Did not arrive within 15', 'Arrived at within 15', 'Total Cases', 'Not_Arrived', 'Arrived_Under_15', 'Not Arrived', 'Over_15', 'Under_15', 'Grand Total', 'Percentage']
 
 export const calculateDistance = (start, end) => {
     function deg2rad(deg) {
